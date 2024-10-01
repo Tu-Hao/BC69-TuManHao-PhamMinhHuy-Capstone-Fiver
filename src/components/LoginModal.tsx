@@ -1,9 +1,10 @@
+// src/components/LoginModal.tsx
 import React, { useState } from "react";
 import { Modal, Button, Input, message } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../redux/authSlice";
-import { RootState } from "../redux/store"; 
+import { RootState } from "../redux/store";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -65,59 +66,88 @@ const LoginModal: React.FC = () => {
       {user ? (
         <div className="flex items-center space-x-4">
           <span>Xin chào {user.name}!</span>
+          <i className="fa-solid fa-user bg-lime-500 h-8 w-8 text-center place-content-center rounded-full"></i>
           <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
-            Đăng xuất
+            Logout
           </Button>
         </div>
       ) : (
         // show login button
-        <Button className="bg-lime-500 text-stone-50" onClick={() => setVisible(true)}>
-          Đăng nhập
+        <Button
+          className=" text-gray-900 border-none hover:!text-lime-500 bg-transparent"
+          onClick={() => setVisible(true)}
+        >
+          Sign in
         </Button>
       )}
 
       {/* Ant Design Modal */}
       <Modal
-        title="Đăng nhập"
-        className="text-lime-500"
         open={visible}
         onCancel={() => setVisible(false)}
         footer={[
           <Button key="cancel" onClick={() => setVisible(false)}>
             Hủy
           </Button>,
-          <Button key="submit" className="text-neutral-50 bg-lime-500" onClick={handleLogin}>
+          <Button
+            key="submit"
+            className="text-neutral-50 bg-lime-500"
+            onClick={handleLogin}
+          >
             Đăng nhập
           </Button>,
         ]}
       >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Email:
-            </label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Nhập email"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
+        <div className="flex h-full">
+          {/* Left half with background image */}
+          <div className="w-1/2 relative">
+            <img
+              src="./img/BGmodal.png"
+              alt="BGmodal"
+              className="bg-no-repeat bg-cover h-full rounded-md "
             />
+            <div className="absolute top-0 text-xl text-neutral-50 mt-1 w-full p-7 ">
+              <h2 className="font-bold">Success starts here</h2>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-2">
+                Over 700 categories
+              </li>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-1">
+                Quality work done faster
+              </li>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-1">
+                Access to talent and businesses across the globe
+              </li>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Mật khẩu:
-            </label>
-            <Input.Password
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nhập mật khẩu"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
-            />
+
+          {/* Right half with registration form */}
+          <div className="w-1/2 p-8">
+            <h2 className="text-2xl font-bold mb-4">Đăng Nhập</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium ">Email:</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Nhập email"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium ">Mật khẩu:</label>
+                <Input.Password
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              {errorMessage && (
+                <div className="text-red-500 text-sm">{errorMessage}</div>
+              )}
+            </div>
           </div>
-          {errorMessage && (
-            <div className="text-red-500 text-sm">{errorMessage}</div>
-          )}
         </div>
       </Modal>
     </div>

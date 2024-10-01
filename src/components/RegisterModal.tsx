@@ -1,3 +1,4 @@
+// src/components/RegisterModal.tsx
 import React, { useState } from "react";
 import { Modal, Button, Input, message } from "antd";
 import axios from "axios";
@@ -89,20 +90,19 @@ const RegisterModal: React.FC = () => {
     <div className="flex justify-center items-center ml-3">
       {/* Kiểm tra xem user đã đăng nhập hay chưa */}
       {user ? (
-        <i className="fa-solid fa-user bg-lime-500 h-8 w-8 text-center place-content-center rounded-full"></i>
+        <i></i>
       ) : (
         // Button to open the modal
         <Button
-          className="bg-lime-500 text-stone-50"
+          className="bg-transparent text-lime-500 !border-lime-500 hover:!bg-lime-500 hover:!text-neutral-50"
           onClick={() => setVisible(true)}
         >
-          Đăng ký
+          Join
         </Button>
       )}
 
       {/* Ant Design Modal */}
       <Modal
-        title="Đăng ký"
         open={visible}
         onCancel={() => setVisible(false)}
         footer={[
@@ -118,71 +118,92 @@ const RegisterModal: React.FC = () => {
           </Button>,
         ]}
       >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Họ tên:
-            </label>
-            <Input
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Nhập họ tên"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
+        <div className="flex h-full">
+          {/* Left half with background image */}
+          <div className="w-1/2 relative">
+            <img
+              src="./img/BGmodal.png"
+              alt="BGmodal"
+              className="bg-no-repeat bg-cover h-full rounded-md "
             />
+            <div className="absolute top-0 text-xl text-neutral-50 mt-4 w-full p-7 ">
+              <h2 className="font-bold">Success starts here</h2>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-2">
+                Over 700 categories
+              </li>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-1">
+                Quality work done faster
+              </li>
+              <li className="before:content-['√'] before:mr-1 text-sm mt-1">
+                Access to talent and businesses across the globe
+              </li>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Email:
-            </label>
-            <Input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Nhập email"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
-            />
+
+          {/* Right half with registration form */}
+          <div className="w-1/2 p-8">
+            <h2 className="text-2xl font-bold mb-4">Đăng Ký</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium ">Họ tên:</label>
+                <Input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Nhập họ tên"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium ">Email:</label>
+                <Input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Nhập email"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium ">Mật khẩu:</label>
+                <Input.Password
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Nhập mật khẩu"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium ">
+                  Nhập lại mật khẩu:
+                </label>
+                <Input.Password
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Nhập lại mật khẩu"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium ">
+                  Số điện thoại:
+                </label>
+                <Input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="Nhập số điện thoại"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+              {errorMessage && (
+                <div className="text-red-500 text-sm">{errorMessage}</div>
+              )}
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Mật khẩu:
-            </label>
-            <Input.Password
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Nhập mật khẩu"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Nhập lại mật khẩu:
-            </label>
-            <Input.Password
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              placeholder="Nhập lại mật khẩu"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-lime-500">
-              Số điện thoại:
-            </label>
-            <Input
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="Nhập số điện thoại"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm text-lime-500"
-            />
-          </div>
-          {errorMessage && (
-            <div className="text-red-500 text-sm">{errorMessage}</div>
-          )}
         </div>
       </Modal>
     </div>
