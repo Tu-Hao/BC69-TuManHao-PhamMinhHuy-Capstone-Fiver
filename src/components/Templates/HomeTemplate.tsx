@@ -130,7 +130,7 @@ export const HomeTemplate = () => {
         />
       </div>
 
-      <div className="bg-green-800 p-16 rounded-2xl grid grid-cols-[60%,40%] items-center">
+      <div className="bg-green-800 p-16 rounded-2xl grid grid-cols-[60%,40%] text-white mt-5 items-center">
         <div>
           <p className="text-[30px] ">
             <span className="font-[700] pe-1 ">fiverr</span>pro.
