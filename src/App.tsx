@@ -1,3 +1,5 @@
+import "./App.css";
+import { routers } from "./Router/Router";
 import React from "react";
 import { useRoutes } from "react-router-dom";
 import Banner from "./components/Banner";
@@ -15,6 +17,9 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 function App() {
+  return <>
+  {routers()}
+  </>;
   // Sử dụng useRoutes để điều hướng giữa các trang
   const routes = useRoutes([
     {
