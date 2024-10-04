@@ -13,6 +13,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     </>
   );
 };
+import "./App.css";
+import { routers } from "./Router/Router";
 
 function App() {
   // Sử dụng useRoutes để điều hướng giữa các trang
@@ -50,8 +52,12 @@ function App() {
         Khởi tạo dự án capstone fiver
       </h1>
       {routes}
+      {routers()}
     </div>
   );
+  return <>
+  {routers()}
+  </>;
 }
 
 export default App;
