@@ -1,8 +1,8 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { pageUserReducer } from "./pageUser/slice";
+// import { configureStore } from "@reduxjs/toolkit";
+// import { store } from "./pageUser/slice";
 
-export const store = configureStore({
-    reducer:{
-        pageUserReducer,
-    }
-})
+// export const storeRedux = configureStore({
+//     reducer:{
+//         store,
+//     }
+// })
