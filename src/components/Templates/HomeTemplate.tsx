@@ -1,7 +1,6 @@
-import { Button, Carousel, Input } from "antd";
+import { Carousel } from "antd";
 import { useGetDetailTypeCV, useGetTypeCV } from "../../Hook/Api/useCongViec";
 import ReactPlayer from "react-player";
-import icon from "/program.svg";
 
 export const HomeTemplate = () => {
   const { data: listTypeCV } = useGetTypeCV();
@@ -10,7 +9,7 @@ export const HomeTemplate = () => {
 
   return (
     <div className="mx-[100px] my-8 xl:mx-[150px] xl:my-14 2xl:mx-[252px] 2xl:my-16">
-      <div className=" relative">
+      {/* <div className=" relative">
         <div className="flex justify-center ">
           <img src="/image/hero-lg-x1.png" alt="" className=" " />
         </div>
@@ -35,7 +34,7 @@ export const HomeTemplate = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div>
         <p className="text-[40px] font-[500]">Popular services</p>

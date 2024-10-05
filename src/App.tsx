@@ -3,6 +3,9 @@ import { useRoutes } from "react-router-dom";
 import Banner from "./components/Banner";
 import Header from "./components/Header";
 import SearchResults from "./Pages/SearchResults";
+import {Footer} from "../src/components/UI"
+import "./App.css";
+import { routers } from "./Router/Router";
 
 // Tạo layout chứa Header và nội dung động
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -10,11 +13,11 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <>
       <Header />
       {children}
+
     </>
   );
 };
-import "./App.css";
-import { routers } from "./Router/Router";
+
 
 function App() {
   // Sử dụng useRoutes để điều hướng giữa các trang
@@ -32,6 +35,7 @@ function App() {
       element: (
         <MainLayout>
           <SearchResults />
+          <Footer/>
         </MainLayout>
       ),
     },
@@ -40,6 +44,7 @@ function App() {
       element: (
         <MainLayout>
           <SearchResults />
+          <Footer/>
         </MainLayout>
       ),
     },
@@ -47,10 +52,6 @@ function App() {
 
   return (
     <div>
-      {/* Bạn có thể thêm tiêu đề trang như bạn đã làm */}
-      <h1 className=" text-lime-500 font-bold text-center text-5xl p-5">
-        Khởi tạo dự án capstone fiver
-      </h1>
       {routes}
       {routers()}
     </div>
