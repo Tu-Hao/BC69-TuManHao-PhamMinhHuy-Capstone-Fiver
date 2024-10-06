@@ -56,9 +56,6 @@ function App() {
       {routers()}
     </div>
   );
-  return <>
-  {routers()}
-  </>;
 }
 
 export default App;

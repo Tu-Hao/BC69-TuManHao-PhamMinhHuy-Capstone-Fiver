@@ -192,6 +192,79 @@ const Header: React.FC = () => {
               </div>
             )}
 
+            {/* Dropdown for Explore */}
+            {/* {isExploreOpen && (
+              <div className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg">
+                <a
+                  href="https://answers.fiverr.com/"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Answers
+                  <ul className="font-normal">
+                    Powered by AI, answered by Fiverr freelancers
+                  </ul>
+                </a>
+                <a
+                  href="https://events.fiverr.com/?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Community
+                  <ul className="font-normal">
+                    Connect with Fiverr’s team and community
+                  </ul>
+                </a>
+                <a
+                  href="https://www.fiverr.com/resources/guides?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Guides
+                  <ul className="font-normal">
+                    In-depth guides covering business topics
+                  </ul>
+                </a>
+                <a
+                  href="https://play.acast.com/s/ninetwentynine?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Podcast
+                  <ul className="font-normal">
+                    Inside tips from top business minds
+                  </ul>
+                </a>
+                <a
+                  href="https://learn.fiverr.com/?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Learn
+                  <ul className="font-normal">
+                    Professional online courses, led by experts
+                  </ul>
+                </a>
+                <a
+                  href="http://blog.fiverr.com/?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Blog
+                  <ul className="font-normal">
+                    News, information and community stories
+                  </ul>
+                </a>
+                <a
+                  href="https://www.fiverr.com/logo-maker?source=explore-tab"
+                  target="_blank"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                >
+                  Logo Maker
+                  <ul className="font-normal">Create your logo instantly</ul>
+                </a>
+              </div>
+            )} */}
           </div>
 
           <a href="#" className="hover:text-lime-500">
