@@ -2,13 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-li{
+footer li {
     padding: 10px 0 !important;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         text-decoration: underline;
     }
 }
-i{
+
+footer i {
     font-size: 25px;
 }
+
+.slick-prev::after {
+    border-inline-width: 4px 0 !important;
+    border-block-width: 4px 0 !important;
+    border-color: black !important;
+    top: 5px !important;
+}
+
+.slick-next::after {
+    border-inline-width: 4px 0 !important;
+    border-block-width: 4px 0 !important;
+    border-color: black !important;
+    top: 5px !important;
+
+}
+
+.slick-list {
+    margin: 0 30px !important;
+}
+
+#like .ant-rate-star:not(.ant-rate-star-selected) {
+    color: red; 
+}
+
