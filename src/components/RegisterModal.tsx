@@ -107,14 +107,14 @@ const RegisterModal: React.FC = () => {
         onCancel={() => setVisible(false)}
         footer={[
           <Button key="cancel" onClick={() => setVisible(false)}>
-            Hủy
+            Cancel
           </Button>,
           <Button
             key="submit"
             className="text-neutral-50 bg-lime-500"
             onClick={handleRegister}
           >
-            Đăng ký
+            Create
           </Button>,
         ]}
       >
@@ -142,15 +142,15 @@ const RegisterModal: React.FC = () => {
 
           {/* Right half with registration form */}
           <div className="w-1/2 p-8">
-            <h2 className="text-2xl font-bold mb-4">Đăng Ký</h2>
+            <h2 className="text-2xl font-bold mb-4">Register an account</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium ">Họ tên:</label>
+                <label className="block text-sm font-medium ">Your name:</label>
                 <Input
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Nhập họ tên"
+                  placeholder="Input your name"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
@@ -161,41 +161,41 @@ const RegisterModal: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="Nhập email"
+                  placeholder="email"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium ">Mật khẩu:</label>
+                <label className="block text-sm font-medium ">Password:</label>
                 <Input.Password
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  placeholder="Nhập mật khẩu"
+                  placeholder="Password"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium ">
-                  Nhập lại mật khẩu:
+                  Confirm password:
                 </label>
                 <Input.Password
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  placeholder="Nhập lại mật khẩu"
+                  placeholder="confirm Password"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium ">
-                  Số điện thoại:
+                  Phone number:
                 </label>
                 <Input
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  placeholder="Nhập số điện thoại"
+                  placeholder="Phone number"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>

@@ -1,37 +1,47 @@
 // redux/authSlice.ts
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface UserState {
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-    phone: string;
-    birthday: string;
-    gender: boolean;
-    role: string;
-    skill: string[];
-    certification: string[];
-  } | null;
+// Define User and Content interfaces
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  birthday: string;
+  avatar: string;
+  gender: boolean;
+  role: string;
+  skill: string[];
+  certification: string[];
+  bookingJob: any[];
 }
 
-const initialState: UserState = {
+interface AuthState {
+  user: User | null;
+  token: string | null;
+}
+
+const initialState: AuthState = {
   user: null,
+  token: null, // Store the token separately
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action) {
-      state.user = action.payload;
+    login: (state, action: PayloadAction<{ user: User; token: string }>) => {
+      state.user = action.payload.user; // Save user data
+      state.token = action.payload.token; // Save the token
     },
-    logout(state) {
+    logout: (state) => {
       state.user = null;
+      state.token = null; // Clear both user and token on logout
     },
   },
 });
 
+// Export actions and reducer
 export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;

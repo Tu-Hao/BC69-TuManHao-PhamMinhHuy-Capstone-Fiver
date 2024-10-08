@@ -1,12 +1,14 @@
-// src/components/LoginModal.tsx
+// // src/components/LoginModal.tsx
 import React, { useState } from "react";
-import { Modal, Button, Input, message } from "antd";
+import { Modal, Button, Input, message, Dropdown, Menu } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../redux/authSlice";
 import { RootState } from "../redux/store";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
+// Define login validation schema using Zod
 const loginSchema = z.object({
   email: z.string().email("Vui lòng nhập tài khoản hợp lệ"),
   password: z.string().min(1, "Vui lòng nhập mật khẩu"),
@@ -38,10 +40,15 @@ const LoginModal: React.FC = () => {
         }
       );
 
-      const userData = response.data;
+      const { user, token } = response.data.content;
 
-      // Save user data to Redux
-      dispatch(login(userData));
+      // Dispatch login action with extracted user and token
+      dispatch(
+        login({
+          user, // Save the user data
+          token, // Save the token
+        })
+      );
 
       setVisible(false); // Close modal after successful login
       message.success("Đăng nhập thành công!");
@@ -54,11 +61,35 @@ const LoginModal: React.FC = () => {
       }
     }
   };
+  
 
   const handleLogout = () => {
     dispatch(logout());
     message.info("Đã đăng xuất.");
   };
+
+// Define the menu items
+const menuItems = [
+  {
+    key: "profile",
+    label: (
+      <div  className="text-center" >
+      <Link to={`/Profile/${user?.id}`} >
+        Profile
+      </Link>
+      </div>
+
+    ),
+  },
+  {
+    key: "logout",
+    label: (
+      <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
+        Logout
+      </Button>
+    ),
+  },
+];
 
   return (
     <div className="flex justify-center items-center ">
@@ -66,10 +97,14 @@ const LoginModal: React.FC = () => {
       {user ? (
         <div className="flex items-center space-x-4">
           <span>Xin chào {user.name}!</span>
-          <i className="fa-solid fa-user bg-lime-500 h-8 w-8 text-center place-content-center rounded-full"></i>
-          <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
-            Logout
-          </Button>
+          <Dropdown
+            menu={{
+              items: menuItems, // Pass the menuItems array directly
+            }}
+            trigger={['click']}
+          >
+            <i className="fa-solid fa-user bg-lime-500 h-10 w-10 text-center place-content-center rounded-full cursor-pointer"></i>
+          </Dropdown>
         </div>
       ) : (
         // show login button
@@ -87,14 +122,14 @@ const LoginModal: React.FC = () => {
         onCancel={() => setVisible(false)}
         footer={[
           <Button key="cancel" onClick={() => setVisible(false)}>
-            Hủy
+            Cancel
           </Button>,
           <Button
             key="submit"
             className="text-neutral-50 bg-lime-500"
             onClick={handleLogin}
           >
-            Đăng nhập
+            Sign in
           </Button>,
         ]}
       >

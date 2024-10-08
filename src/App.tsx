@@ -1,3 +1,4 @@
+// app.tsx
 import React from "react";
 import { useRoutes } from "react-router-dom";
 import Banner from "./components/Banner";
@@ -6,6 +7,7 @@ import SearchResults from "./Pages/SearchResults";
 import {Footer} from "../src/components/UI"
 import "./App.css";
 import { routers } from "./Router/Router";
+import Profile from './Pages/Profile';
 
 // Tạo layout chứa Header và nội dung động
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,6 +49,16 @@ function App() {
           <Footer/>
         </MainLayout>
       ),
+    },
+    {
+      path: "/Profile/:id",
+      element: (
+        <MainLayout>
+          <Profile />
+          <Footer/>
+        </MainLayout>
+      )
+      
     },
   ]);
 
