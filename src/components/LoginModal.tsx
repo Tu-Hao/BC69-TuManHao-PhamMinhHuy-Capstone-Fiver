@@ -10,8 +10,8 @@ import { z } from "zod";
 
 // Define login validation schema using Zod
 const loginSchema = z.object({
-  email: z.string().email("Vui lòng nhập tài khoản hợp lệ"),
-  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
+  email: z.string().email("Please enter a valid account"),
+  password: z.string().min(1, "Please enter a valid password"),
 });
 
 const LoginModal: React.FC = () => {
@@ -51,13 +51,13 @@ const LoginModal: React.FC = () => {
       );
 
       setVisible(false); // Close modal after successful login
-      message.success("Đăng nhập thành công!");
+      message.success("Login successfully !");
       setErrorMessage(null);
     } catch (error: any) {
       if (error.issues) {
         setErrorMessage(error.issues[0].message); // Zod validation error
       } else {
-        setErrorMessage("Đăng nhập thất bại. Vui lòng kiểm tra thông tin.");
+        setErrorMessage("Login failed. Please check your information.");
       }
     }
   };
@@ -65,7 +65,7 @@ const LoginModal: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    message.info("Đã đăng xuất.");
+    message.info("You have logged out !");
   };
 
 // Define the menu items
@@ -103,7 +103,7 @@ const menuItems = [
             }}
             trigger={['click']}
           >
-            <i className="fa-solid fa-user bg-lime-500 h-10 w-10 text-center place-content-center rounded-full cursor-pointer"></i>
+            <i className="fa-solid fa-user bg-lime-500 h-9 w-9 text-center place-content-center rounded-full cursor-pointer"></i>
           </Dropdown>
         </div>
       ) : (
@@ -157,7 +157,7 @@ const menuItems = [
 
           {/* Right half with registration form */}
           <div className="w-1/2 p-8">
-            <h2 className="text-2xl font-bold mb-4">Đăng Nhập</h2>
+            <h2 className="text-2xl font-bold mb-4">Login</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium ">Email:</label>
@@ -165,16 +165,16 @@ const menuItems = [
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Nhập email"
+                  placeholder="Input email"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium ">Mật khẩu:</label>
+                <label className="block text-sm font-medium ">Password:</label>
                 <Input.Password
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Nhập mật khẩu"
+                  placeholder="Input password"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>

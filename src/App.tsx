@@ -8,6 +8,7 @@ import {Footer} from "../src/components/UI"
 import "./App.css";
 import { routers } from "./Router/Router";
 import Profile from './Pages/Profile';
+import { HomeTemplate } from "./components";
 
 // Tạo layout chứa Header và nội dung động
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -28,7 +29,7 @@ function App() {
       path: "/",
       element: (
         <MainLayout>
-          <Banner />
+          <></>
         </MainLayout>
       ),
     },

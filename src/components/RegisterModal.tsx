@@ -37,7 +37,7 @@ const RegisterModal: React.FC = () => {
   const dispatch = useDispatch();
 
   // Lấy thông tin user từ Redux
-  const user = useSelector((state: RootState) => state.auth.user); // auth là slice trong Redux
+  const user = useSelector((state: RootState) => state.auth.user);
 
   // Hàm đăng ký
   const handleRegister = async () => {
@@ -69,7 +69,7 @@ const RegisterModal: React.FC = () => {
       dispatch(login(response.data));
 
       setVisible(false); // Đóng modal sau khi đăng ký thành công
-      message.success("Đăng ký thành công!");
+      message.success("Registration successful !");
       setErrorMessage(null);
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
@@ -77,7 +77,7 @@ const RegisterModal: React.FC = () => {
       } else if (error.issues) {
         setErrorMessage(error.issues[0].message); // Lỗi xác thực từ Zod
       } else {
-        setErrorMessage("Đăng ký thất bại. Vui lòng thử lại.");
+        setErrorMessage("Registration failed. Please try again.");
       }
     }
   };

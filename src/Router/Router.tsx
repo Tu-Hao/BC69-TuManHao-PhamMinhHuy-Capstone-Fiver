@@ -1,6 +1,9 @@
 import { useRoutes } from "react-router-dom";
-import { MainLayout } from "../components";
+import { DSCVLayout, MainLayout } from "../components";
 import { Home } from "../Pages/Home";
+import { PATH } from "../constants";
+import { DSCV } from "../Pages/DSCV";
+import { ListNType } from "../Pages/ListNType";
 
 export const routers = () =>
   useRoutes([
@@ -11,16 +14,19 @@ export const routers = () =>
           index: true,
           element: <Home />,
         },
+      
       ],
-    },
-    {
-      element: <></>, // gom cái mainlayout thành 1 file riêng rồi truyền vào trong <></>
+    },{
+      element: <DSCVLayout />,
       children: [
         {
-          path: "/", // cái này chắc nên có thêm admin đằng sau để phân biệt với trang user
-          element: <></>,//phần hiển thị của của đường dẫn
+          path:PATH.DSCV,
+          element:<DSCV/>
         },
-        //copy paste 
+        {
+          path:PATH.LNTCV,
+          element:<ListNType/>
+        }
       ],
-    },
+    }
   ]);
