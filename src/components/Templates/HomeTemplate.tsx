@@ -1,12 +1,21 @@
-import { Button, Carousel, Input } from "antd";
-import { useGetDetailTypeCV, useGetTypeCV } from "../../Hook/Api/useCongViec";
+import { Carousel, Input, Rate } from "antd";
+import {
+  useGetDetailTypeCV,
+  useGetTypeCV,
+  useSearchByName,
+} from "../../Hook/Api/useCongViec";
 import ReactPlayer from "react-player";
-import icon from "/program.svg";
+import { sleep } from "../../utils/sleep";
+import cn from "classnames";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export const HomeTemplate = () => {
   const { data: listTypeCV } = useGetTypeCV();
   const { data: detailCV } = useGetDetailTypeCV();
-  console.log(listTypeCV);
+  const [valueSearch, setValueSearch] = useState<string>("");
+
+  const { data: resultSearch } = useSearchByName(valueSearch);
 
   return (
     <div className="mx-[100px] my-8 xl:mx-[150px] xl:my-14 2xl:mx-[252px] 2xl:my-16">
@@ -15,19 +24,63 @@ export const HomeTemplate = () => {
           <img src="/image/hero-lg-x1.png" alt="" className=" " />
         </div>
         <div className="w-[50%] left-[25%] top-[30%] absolute flex flex-col items-center z-10 ">
-          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[50px] 2xl:font-[700] xl:text-[45px] ">
+          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[30px] 2xl:font-[700] xl:text-[45px] ">
             Find the right freelance service, right away
           </p>
-          <Input.Search enterButton className="my-2" />
-          <div className="grid grid-cols-[13%,87%]">
-            <p className="text-white font-[600]">Popular: </p>
-            <div className="flex gap-1 truncate hover:overflow-x-scroll w-full text-white">
+          <div className="w-full my-2">
+            <Input.Search
+              allowClear
+              placeholder="Find your work"
+              onChange={async (e) => {
+                await sleep(1000);
+                setValueSearch(e.target.value);
+              }}
+            />
+            <div className="relative">
+              <div
+                className={cn(
+                  "absolute bg-white w-full rounded-md z-20 overflow-y-scroll ",
+                  { "h-[500px]": resultSearch && resultSearch.length > 2 }
+                )}
+              >
+                {resultSearch?.map((item) => (
+                  <div className="p-3">
+                    <div className="flex gap-2 text-[15px] items-center">
+                      <img
+                        src={item.congViec.hinhAnh}
+                        alt=""
+                        className="w-[100px] h-[100px]"
+                      />
+                      <div>
+                        <p className="font-[600]">Nhóm: </p>
+                        <p>
+                          {item.tenLoaiCongViec}-{item.tenNhomChiTietLoai}-
+                          {item.tenChiTietLoai}
+                        </p>
+                        <p className="font-[600]">Tên: </p>
+                        <p>{item.congViec.tenCongViec}</p>
+                        <p className="font-[600]">Mô tả: </p>
+                        <p>{item.congViec.moTaNgan}</p>
+                        <div className="flex justify-between items-center">
+                          <p className="font-[600]">
+                            Đánh giá:{" "}
+                            <Rate value={item.congViec.danhGia} disabled />
+                          </p>
+                          <p>Giá: {item.congViec.giaTien}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-[15%,85%]">
+            <p className="text-white font-[600] text-[20px]">Popular: </p>
+            <div className="flex gap-1 truncate hover:overflow-x-scroll w-full text-white items-center">
               {listTypeCV?.map((item) => {
                 return (
-                  <p
-                    className="border-2 rounded-md whitespace-nowrap"
-                    key={item.id}
-                  >
+                  <p className="px-2 whitespace-nowrap" key={item.id}>
                     {item.tenLoaiCongViec}
                   </p>
                 );
@@ -346,5 +399,3 @@ export const HomeTemplate = () => {
     </div>
   );
 };
-
-// https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9

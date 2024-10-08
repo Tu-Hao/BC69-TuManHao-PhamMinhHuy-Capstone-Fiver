@@ -1,5 +1,19 @@
-import { Avatar, Button, Dropdown, MenuProps, Popover, Space } from "antd";
-
+import {
+  Button,
+  Carousel,
+  Dropdown,
+  Input,
+  MenuProps,
+  Rate,
+  Space,
+} from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import cn from "classnames";
+import { useEffect, useState } from "react";
+import { useGetMenuCV, useSearchByName } from "../../Hook/Api/useCongViec";
+import { sleep } from "../../utils/sleep";
+import { useData } from "../../constants/Context";
+import { PATH } from "../../constants";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -29,12 +43,72 @@ const items: MenuProps["items"] = [
 ];
 
 export const Header = () => {
-  const user = undefined;
+  const location = useLocation();
+  const check = location.pathname === "/";
+  useEffect(() => {}, [check]);
+  const { setData } = useData();
+  const [valueSearch, setValueSearch] = useState<string>("");
+  const { data: search } = useSearchByName(valueSearch);
+  const { data: menuCV } = useGetMenuCV();
+  const navigate = useNavigate()
+
+
   return (
     <div className="sticky top-0 bg-white z-50">
       <div className="flex justify-around items-center h-[70px]">
-        <div className="text-[30px] font-[700]">
-          fiverr<span className="text-green-600">.</span>
+        <div className="text-[30px] font-[700] flex gap-5 items-center">
+          <p>
+            fiverr<span className="text-green-600">.</span>
+          </p>
+          <div>
+            <Input.Search
+            className="pt-2"
+              allowClear
+              placeholder="Find your work"
+              onChange={async (e) => {
+                await sleep(1000);
+                setValueSearch(e.target.value);
+              }}
+            />
+            <div className="relative">
+              <div
+                className={cn(
+                  "absolute bg-white w-[600px] rounded-md z-20 overflow-y-scroll ",
+                  { "h-[500px]": search && search.length > 2 }
+                )}
+              >
+                {search?.map((item) => (
+                  <div className="p-3" key={item.id}>
+                    <div className="flex gap-2 text-[15px] items-center font-[400]">
+                      <img
+                        src={item.congViec.hinhAnh}
+                        alt=""
+                        className="w-[100px] h-[100px]"
+                      />
+                      <div>
+                        <p className="font-[600]">Nhóm: </p>
+                        <p>
+                          {item.tenLoaiCongViec}-{item.tenNhomChiTietLoai}-
+                          {item.tenChiTietLoai}
+                        </p>
+                        <p className="font-[600]">Tên: </p>
+                        <p>{item.congViec.tenCongViec}</p>
+                        <p className="font-[600]">Mô tả: </p>
+                        <p>{item.congViec.moTaNgan}</p>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <p className="font-[600]">Đánh giá:</p>
+                            <Rate value={item.congViec.saoCongViec} disabled allowHalf />
+                          </div>
+                          <p>Giá: {item.congViec.giaTien}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
         <div className=" sm:visible invisible flex items-center gap-10">
           <a href="#" className=" font-[600] text-[18px]" aria-current="page">
@@ -43,36 +117,10 @@ export const Header = () => {
           <a href="#" className=" font-[600] text-[18px]" aria-current="page">
             Sign In
           </a>
-          {/* chỗ này chưa tạo biến user đúng kiểu nên hơi đỏ */}
-          {/* {user ? (
-            <div className="flex items-center gap-4">
-              <p>Hi, {user?.hoTen}</p>
-              <Popover
-                content={
-                  <div className="flex flex-col p-[12px]">
-                    <div>
-                      <p className="cursor-pointer hover:text-red-700 text-[20px] mb-5">
-                        Thông tin cá nhân
-                      </p>
-                    </div>
-                    <div>
-                      <Button className="w-full">Đăng xuất</Button>
-                    </div>
-                  </div>
-                }
-              >
-                <Avatar
-                  size={"large"}
-                  className="bg-[#87d068] text-center"
-                  icon={<i className="fa-regular fa-user p-0"></i>}
-                />
-              </Popover>
-            </div>
-          ) : (
-          )} */}
-            <div>
-              <Button type="primary">John</Button>
-            </div>
+
+          <div>
+            <Button className="border-green-600 text-green-600">John</Button>
+          </div>
         </div>
         <div className="sm:hidden block">
           <Dropdown menu={{ items }}>
@@ -84,6 +132,66 @@ export const Header = () => {
           </Dropdown>
         </div>
       </div>
+      <div className="  border-y-2 py-3 px-10" >
+        <Carousel
+          slidesToShow={9}
+          draggable={true}
+          slidesToScroll={5}
+          dots={false}
+          variableWidth
+          adaptiveHeight
+          arrows
+          id="carouselHeader"
+        >
+          {menuCV?.map((item) => {
+            const items: MenuProps["items"] = item.dsNhomChiTietLoai
+              .flatMap((dsNhom) => [
+                {
+                  key: dsNhom.id,
+                  label: (
+                    <div className="text-[16px] font-[500] hover:no-underline">
+                      {dsNhom.tenNhom}
+                    </div>
+                  ),
+                  disabled: true,
+                },
+                dsNhom.dsChiTietLoai.flatMap((loai) => [
+                  {
+                    key: loai.id,
+                    label: (
+                      <div
+                        onClick={() => {
+                          setData({maNhomCV:loai.id,tenNhom:loai.tenChiTiet});
+                          if(location.pathname!=='/DSCV'){
+                            navigate(PATH.DSCV)
+                          }
+                        }}
+                      >
+                        {loai.tenChiTiet}
+                      </div>
+                    ),
+                  },
+                ]),
+              ])
+              .flat();
+
+            return (
+              <Dropdown
+                menu={{ items }}
+                className="mx-3 "
+                key={item.id}
+                trigger={["click"]}
+              >
+                <p className="text-[18px] font-[600] ">
+                  {item.tenLoaiCongViec}
+                </p>
+              </Dropdown>
+            );
+          })}
+        </Carousel>
+      </div>
+
+
     </div>
   );
 };

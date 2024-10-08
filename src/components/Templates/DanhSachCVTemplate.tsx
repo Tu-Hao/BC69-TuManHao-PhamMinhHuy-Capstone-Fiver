@@ -1,8 +1,5 @@
 import {
   Button,
-  Carousel,
-  Dropdown,
-  MenuProps,
   Pagination,
   Popover,
   Rate,
@@ -10,87 +7,30 @@ import {
   Switch,
 } from "antd";
 import {
-  useGetMenuCV,
   useGetPageCV,
   useSearchByMaLoai,
 } from "../../Hook/Api/useCongViec";
 import { useState } from "react";
 import cn from "classnames";
+import { useData } from "../../constants/Context";
 
 export const DanhSachCVTemplate = () => {
-  const { data: menuCV } = useGetMenuCV();
+const {data,setData} = useData()
 
-  const [maLoaiChiTiet, setMaLoaiChiTiet] = useState<number>(1);
-  const [tenChiTietLoai, setTenChiTietLoai] = useState<string>();
+
   const [page, setPage] = useState<number>(1);
   
   const { data: pageCV } = useGetPageCV(page);
-  const { data: resultSearch } = useSearchByMaLoai(maLoaiChiTiet);
+  const { data: resultSearch } = useSearchByMaLoai(data?.maNhomCV as number)
 
   return (
     <div>
-      <div className="  border-y-2 py-3 px-10">
-        <Carousel
-          slidesToShow={10}
-          draggable={true}
-          slidesToScroll={5}
-          dots={false}
-          variableWidth
-          adaptiveHeight
-          arrows
-        >
-          {menuCV?.map((item) => {
-            const items: MenuProps["items"] = item.dsNhomChiTietLoai
-              .flatMap((dsNhom) => [
-                {
-                  key: dsNhom.id,
-                  label: (
-                    <div className="text-[16px] font-[500] hover:no-underline">
-                      {dsNhom.tenNhom}
-                    </div>
-                  ),
-                  disabled: true,
-                },
-                dsNhom.dsChiTietLoai.flatMap((loai) => [
-                  {
-                    key: loai.id,
-                    label: (
-                      <div
-                        onClick={() => {
-                          setMaLoaiChiTiet(loai.id);
-                          setTenChiTietLoai(loai.tenChiTiet);
-                        }}
-                      >
-                        {loai.tenChiTiet}
-                      </div>
-                    ),
-                  },
-                ]),
-              ])
-              .flat();
-
-            return (
-              <Dropdown
-                menu={{ items }}
-                className="mx-3 "
-                key={item.id}
-                trigger={["click"]}
-              >
-                <p className="text-[18px] font-[600] ">
-                  {item.tenLoaiCongViec}
-                </p>
-              </Dropdown>
-            );
-          })}
-        </Carousel>
-      </div>
-
       <div className="mx-10 mt-3 border-2 rounded-md p-5">
         <div>
-          {tenChiTietLoai ? (
+          {data?.tenNhom ? (
             <div className="text-[20px]">
               <span className="font-[600]">For result</span>
-              <span>: "{tenChiTietLoai}"</span>
+              <span>: "{data.tenNhom}"</span>
             </div>
           ) : (
             <span></span>
@@ -98,7 +38,7 @@ export const DanhSachCVTemplate = () => {
         </div>
         <div
           className={cn("flex justify-between ", {
-            "mt-3": tenChiTietLoai,
+            "mt-3": data?.tenNhom,
           })}
         >
           <div>
@@ -161,13 +101,12 @@ export const DanhSachCVTemplate = () => {
             <span>Online Sellers</span>
           </div>
         </div>
-        {tenChiTietLoai ? (
+        {data?.tenNhom ? (
           <Button
             danger
             className="mt-3"
             onClick={() => {
-              setTenChiTietLoai(undefined);
-              setMaLoaiChiTiet(1);
+              setData(null)
             }}
           >
             Reset
@@ -178,10 +117,9 @@ export const DanhSachCVTemplate = () => {
       </div>
 
       <div className="grid grid-cols-5 mx-10 my-10  ">
-        {resultSearch?.length != 0
+        {resultSearch
           ? resultSearch?.map((item) => {
               const { congViec } = item;
-              console.log(congViec);
               return (
                 <div className="p-3" key={item.id}>
                   <img src={congViec.hinhAnh} alt="" className="w-full" />
@@ -279,7 +217,7 @@ export const DanhSachCVTemplate = () => {
 
       <Pagination
         align="center"
-        defaultCurrent={page}
+        defaultCurrent={1}
         total={50}
         onChange={(v) => {
           setPage(v);
