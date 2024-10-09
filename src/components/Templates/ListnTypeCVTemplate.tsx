@@ -14,8 +14,6 @@ export const ListnTypeCVTemplate = () => {
   const style =
     "hover:underline cursor-pointer bg-[#74767e] text-[14px] font-[600] rounded-2xl py-1 px-3 opacity-85";
 
-  console.log(menuCV);
-
   return (
     <div className=" mx-10">
       <div className="bg-[url('/image/G_D.jpg')] bg-cover h-[250px] mt-3 flex flex-col justify-center items-center text-white ">
@@ -135,7 +133,7 @@ export const ListnTypeCVTemplate = () => {
         {menuCV?.map((item) => {
           return item.dsNhomChiTietLoai.map((item1) => {
             return (
-              <div className="p-2 drop-shadow-xl ">
+              <div className="p-2 drop-shadow-xl " key={item1.id}>
                 {item1.hinhAnh && (
                   <img
                     src={item1.hinhAnh}
@@ -143,24 +141,29 @@ export const ListnTypeCVTemplate = () => {
                     className="w-full h-[200px] rounded-lg"
                   />
                 )}
-                <p className="font-[600] my-3" onClick={()=>{
-                   setData({
-                    maNhomCV: item1.id,
-                    tenNhom: item1.tenNhom,
-                  });
-                    navigate(PATH.DSCV);
-                }}>{item1.tenNhom}</p>
+                <p className="font-[600] my-3">{item1.tenNhom}</p>
                 <div>
                   {item1.dsChiTietLoai.map((item2) => (
-                    <div>
+                    <div key={item2.id}>
                       <p
                         className="text-[15px]"
                         onClick={() => {
                           setData({
-                            maNhomCV: item2.id,
-                            tenNhom: item2.tenChiTiet,
+                            maChiTietCV: item2.id,
+                            tenChiTietCV: item2.tenChiTiet,
+                            tenNhom: item1.tenNhom,
+                            tenLoai: item.tenLoaiCongViec,
                           });
-                            navigate(PATH.DSCV);
+                          localStorage.setItem(
+                            "data",
+                            JSON.stringify({
+                              maChiTietCV: item2.id,
+                              tenChiTietCV: item2.tenChiTiet,
+                              tenNhom: item1.tenNhom,
+                              tenLoai: item.tenLoaiCongViec,
+                            })
+                          );
+                          navigate(PATH.DSCV);
                         }}
                       >
                         {item2.tenChiTiet}

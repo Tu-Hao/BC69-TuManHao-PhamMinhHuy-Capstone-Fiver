@@ -23,8 +23,8 @@ export const HomeTemplate = () => {
         <div className="flex justify-center ">
           <img src="/image/hero-lg-x1.png" alt="" className=" " />
         </div>
-        <div className="w-[50%] left-[25%] top-[30%] absolute flex flex-col items-center z-10 ">
-          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[30px] 2xl:font-[700] xl:text-[45px] ">
+        <div className="w-[50%] left-[25%] top-[30%] 2xl:top-[20%] absolute flex flex-col items-center z-10 ">
+          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[50px] 2xl:font-[700] xl:text-[45px] ">
             Find the right freelance service, right away
           </p>
           <div className="w-full my-2">

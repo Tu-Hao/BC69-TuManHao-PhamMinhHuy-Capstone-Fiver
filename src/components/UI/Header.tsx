@@ -48,10 +48,10 @@ export const Header = () => {
   useEffect(() => {}, [check]);
   const { setData } = useData();
   const [valueSearch, setValueSearch] = useState<string>("");
-  const { data: search } = useSearchByName(valueSearch);
+  const { data: search } =
+    valueSearch !== "" ? useSearchByName(valueSearch) : { data: undefined };
   const { data: menuCV } = useGetMenuCV();
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   return (
     <div className="sticky top-0 bg-white z-50">
@@ -62,7 +62,7 @@ export const Header = () => {
           </p>
           <div>
             <Input.Search
-            className="pt-2"
+              className="pt-2"
               allowClear
               placeholder="Find your work"
               onChange={async (e) => {
@@ -98,7 +98,11 @@ export const Header = () => {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center">
                             <p className="font-[600]">Đánh giá:</p>
-                            <Rate value={item.congViec.saoCongViec} disabled allowHalf />
+                            <Rate
+                              value={item.congViec.saoCongViec}
+                              disabled
+                              allowHalf
+                            />
                           </div>
                           <p>Giá: {item.congViec.giaTien}</p>
                         </div>
@@ -132,7 +136,7 @@ export const Header = () => {
           </Dropdown>
         </div>
       </div>
-      <div className="  border-y-2 py-3 px-10" >
+      <div className="  border-y-2 py-3 px-10">
         <Carousel
           slidesToShow={9}
           draggable={true}
@@ -161,9 +165,23 @@ export const Header = () => {
                     label: (
                       <div
                         onClick={() => {
-                          setData({maNhomCV:loai.id,tenNhom:loai.tenChiTiet});
-                          if(location.pathname!=='/DSCV'){
-                            navigate(PATH.DSCV)
+                          setData({
+                            maChiTietCV: loai.id,
+                            tenChiTietCV: loai.tenChiTiet,
+                            tenNhom: dsNhom.tenNhom,
+                            tenLoai: item.tenLoaiCongViec,
+                          });
+                          localStorage.setItem(
+                            "data",
+                            JSON.stringify({
+                              maChiTietCV: loai.id,
+                              tenChiTietCV: loai.tenChiTiet,
+                              tenNhom: dsNhom.tenNhom,
+                              tenLoai: item.tenLoaiCongViec,
+                            })
+                          );
+                          if (location.pathname !== "/DSCV") {
+                            navigate(PATH.DSCV);
                           }
                         }}
                       >
@@ -190,8 +208,6 @@ export const Header = () => {
           })}
         </Carousel>
       </div>
-
-
     </div>
   );
 };
