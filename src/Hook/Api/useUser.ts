@@ -22,3 +22,4 @@ export const useGetCommentCV = (value: number) => {
         data: query.data?.data.content
     }
 }
+

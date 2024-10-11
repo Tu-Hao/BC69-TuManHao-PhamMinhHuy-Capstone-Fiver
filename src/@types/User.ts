@@ -22,4 +22,12 @@ export interface User {
     avatar: string
   }
   
+  export interface UserComment {
+    id: number
+    maCongViec: number
+    maNguoiBinhLuan: number
+    ngayBinhLuan: string
+    noiDung: string
+    saoBinhLuan: number
+  }
   

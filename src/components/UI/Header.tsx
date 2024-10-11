@@ -14,6 +14,8 @@ import { useGetMenuCV, useSearchByName } from "../../Hook/Api/useCongViec";
 import { sleep } from "../../utils/sleep";
 import { useData } from "../../constants/Context";
 import { PATH } from "../../constants";
+import LoginModal from "../LoginModal";
+import RegisterModal from "../RegisterModal";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -57,7 +59,9 @@ export const Header = () => {
     <div className="sticky top-0 bg-white z-50">
       <div className="flex justify-around items-center h-[70px]">
         <div className="text-[30px] font-[700] flex gap-5 items-center">
-          <p>
+          <p onClick={()=>{
+            navigate('')
+          }}>
             fiverr<span className="text-green-600">.</span>
           </p>
           <div>
@@ -115,16 +119,12 @@ export const Header = () => {
           </div>
         </div>
         <div className=" sm:visible invisible flex items-center gap-10">
-          <a href="#" className=" font-[600] text-[18px]" aria-current="page">
+          <a href="#" aria-current="page">
             Become a Seller
           </a>
-          <a href="#" className=" font-[600] text-[18px]" aria-current="page">
-            Sign In
-          </a>
+          <LoginModal />
 
-          <div>
-            <Button className="border-green-600 text-green-600">John</Button>
-          </div>
+          <RegisterModal />
         </div>
         <div className="sm:hidden block">
           <Dropdown menu={{ items }}>
