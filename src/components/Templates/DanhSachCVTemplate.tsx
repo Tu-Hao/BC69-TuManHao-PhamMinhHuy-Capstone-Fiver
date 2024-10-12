@@ -21,7 +21,7 @@ export const DanhSachCVTemplate = () => {
   const { data: pageCV } = useGetPageCV(page);
   const { data: resultSearch } = useSearchByMaLoai(data?.maChiTietCV as number);
   const navigate = useNavigate();
-  const [id ,setid] =useState<number>(1)
+  const [id ,setid] =useState<number>(2)
   const {data:info} = useGetDetailUserById(id)
 
   return (

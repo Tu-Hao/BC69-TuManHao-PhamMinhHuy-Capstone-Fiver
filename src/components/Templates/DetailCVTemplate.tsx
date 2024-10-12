@@ -19,6 +19,8 @@ import { PATH } from "../../constants";
 import { nguoiDung } from "../../services/nguoiDungService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import cn from "classnames";
+import { Comment } from "../../@types/User";
 
 export const DetailCVTemplate = () => {
   const { state } = useLocation();
@@ -29,6 +31,7 @@ export const DetailCVTemplate = () => {
   const [star, setStar] = useState<number>(0);
   const navigate = useNavigate();
   const User = useSelector((state: RootState) => state.auth.user);
+  const [filter, setfilter] = useState<keyof Comment>("saoBinhLuan");
 
   if (isFetching) {
     return (
@@ -41,9 +44,9 @@ export const DetailCVTemplate = () => {
   }
 
   return (
-    <div className="mx-10">
+    <div className="mx-10 ">
       {detail ? (
-        <div className="my-5">
+        <div className="my-5 ">
           <Breadcrumb
             items={[
               {
@@ -58,7 +61,7 @@ export const DetailCVTemplate = () => {
             ]}
             className="text-[20px]"
           />
-          <div className=" grid grid-cols-[60%,40%]">
+          <div className=" grid grid-cols-[60%,40%] ">
             <div className="mt-5">
               <img src={detail?.congViec.hinhAnh} alt="" className="w-full" />
               <div>
@@ -111,9 +114,12 @@ export const DetailCVTemplate = () => {
                       />
                       <span>({detail?.congViec.danhGia})</span>
                     </div>
-                    <button className="border-2 border-black py-1 mt-4 rounded-md" onClick={()=>{
-                      navigate('/Profile')
-                    }}>
+                    <button
+                      className="border-2 border-black py-1 mt-4 rounded-md"
+                      onClick={() => {
+                        navigate("/Profile");
+                      }}
+                    >
                       Contact Me
                     </button>
                   </div>
@@ -359,69 +365,81 @@ export const DetailCVTemplate = () => {
                 </div>
               </div>
               <div>
-                <p>Filter</p>
                 <div className="flex gap-1 items-center">
-                  <p>Industry</p>
-                  <span>
-                    <Select
-                      defaultValue="lucy"
-                      style={{ width: 120 }}
-                      options={[
-                        { value: "jack", label: "Jack" },
-                        { value: "lucy", label: "Lucy" },
-                        { value: "Yiminghe", label: "yiminghe" },
-                        {
-                          value: "disabled",
-                          label: "Disabled",
-                          disabled: true,
-                        },
-                      ]}
-                    />
-                  </span>
+                  <p>Filter</p>
+                  <Select
+                    defaultValue={filter}
+                    style={{ width: 200 }}
+                    options={[
+                      { value: "saoBinhLuan", label: "Liên quan nhất" },
+                      { value: "ngayBinhLuan", label: "Mới nhất " },
+                    ]}
+                    onChange={(v) => {
+                      console.log(v);
+                      setfilter(v);
+                    }}
+                  />
                 </div>
-                <div className="h-[500px] overflow-scroll">
-                  {comment?.map((item) => (
-                    <div className="my-5" key={item.id}>
-                      <div className="flex items-center gap-3">
-                        <Avatar size={30} src={item.avatar} />
-                        <div className="flex items-center">
-                          <p>{item.tenNguoiBinhLuan}</p>
-                          <Rate
-                            value={item.saoBinhLuan}
-                            disabled
-                            allowHalf
-                            count={1}
-                            className="text-[14px]"
-                          />
-                          <span className="text-yellow-400 text-[12px">
-                            {item.saoBinhLuan}
-                          </span>
+                <div
+                  className={cn("overflow-scroll", {
+                    "h-[500px]": comment && comment?.length > 5,
+                  })}
+                >
+                  {comment
+                    ?.sort((a, b) => {
+                      switch (filter) {
+                        case "ngayBinhLuan":
+                          return a.ngayBinhLuan.localeCompare(b.ngayBinhLuan);
+                        case "saoBinhLuan":
+                          return b.saoBinhLuan - a.saoBinhLuan;
+                        default:
+                          return 0;
+                      }
+                    })
+                    .map((item) => (
+                      <div className="my-5" key={item.id}>
+                        <div className="flex items-center gap-3">
+                          <Avatar size={30} src={item.avatar} />
+                          <div className="flex items-center">
+                            <p>{item.tenNguoiBinhLuan}</p>
+                            <Rate
+                              value={item.saoBinhLuan}
+                              disabled
+                              allowHalf
+                              count={1}
+                              className="text-[14px]"
+                            />
+                            <span className="text-yellow-400 text-[12px">
+                              {item.saoBinhLuan}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ms-11">
+                          <p>{item.noiDung}</p>
+                          <p className="text-[12px]">
+                            {dayjs(item.ngayBinhLuan).format(
+                              "DD/MM/YYYY hh:mm"
+                            )}
+                          </p>
+                          <div className="flex items-center gap-2 text-[14px] font-[600] mt-2">
+                            <Rate
+                              character={
+                                <i className="fa-regular fa-thumbs-up"></i>
+                              }
+                              count={1}
+                            />
+                            <p>Helpful</p>
+                            <Rate
+                              character={
+                                <i className="fa-regular fa-thumbs-up "></i>
+                              }
+                              count={1}
+                            />
+                            <p>Not Helpful</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="ms-11">
-                        <p>{item.noiDung}</p>
-                        <p className="text-[12px]">
-                          {dayjs(item.ngayBinhLuan).format("DD/MM/YYYY hh:mm")}
-                        </p>
-                        <div className="flex items-center gap-2 text-[14px] font-[600] mt-2">
-                          <Rate
-                            character={
-                              <i className="fa-regular fa-thumbs-up"></i>
-                            }
-                            count={1}
-                          />
-                          <p>Helpful</p>
-                          <Rate
-                            character={
-                              <i className="fa-regular fa-thumbs-up "></i>
-                            }
-                            count={1}
-                          />
-                          <p>Not Helpful</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
               <div className="flex gap-3 bg-slate-200 p-3 rounded-md">
@@ -460,7 +478,7 @@ export const DetailCVTemplate = () => {
                               maCongViec: state,
                               maNguoiBinhLuan: User?.id,
                               noiDung: mes,
-                              saoBinhLuan: star ,
+                              saoBinhLuan: star,
                               ngayBinhLuan: new Date().toISOString(),
                             });
                             message.success("ok tin nhắn sẽ được soi");
@@ -481,7 +499,7 @@ export const DetailCVTemplate = () => {
                 </div>
               </div>
             </div>
-            <div className=" p-5">
+            <div className=" p-5  ">
               <Tabs
                 defaultActiveKey="1"
                 centered={true}
