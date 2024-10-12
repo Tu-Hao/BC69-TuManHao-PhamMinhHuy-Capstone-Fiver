@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   Collapse,
   List,
+  message,
   Rate,
   Select,
   Skeleton,
@@ -10,10 +11,7 @@ import {
   Tabs,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useGetCommentCV,
-  useGetDetailUserById,
-} from "../../Hook/Api/useUser";
+import { useGetCommentCV, useGetDetailUserById } from "../../Hook/Api/useUser";
 import { useGetDetailCV } from "../../Hook/Api/useCongViec";
 import { useState } from "react";
 import dayjs from "dayjs";
@@ -28,7 +26,7 @@ export const DetailCVTemplate = () => {
   const { data: user } = useGetDetailUserById(detail?.congViec.id as number);
   const { data: comment, refetch } = useGetCommentCV(state);
   const [mes, setMes] = useState<string>();
-  const [star, setStar] = useState<number>();
+  const [star, setStar] = useState<number>(0);
   const navigate = useNavigate();
   const User = useSelector((state: RootState) => state.auth.user);
 
@@ -85,7 +83,7 @@ export const DetailCVTemplate = () => {
                   responsive communication.
                 </p>
                 <hr className="h-[3px] bg-slate-300" />
-                <div className="flex gap-5">
+                <div className="grid grid-cols-2 gap-5">
                   <div>
                     <p className="text-gray-400">Programming Language</p>
                     <p>PHP</p>
@@ -113,7 +111,9 @@ export const DetailCVTemplate = () => {
                       />
                       <span>({detail?.congViec.danhGia})</span>
                     </div>
-                    <button className="border-2 border-black py-1 mt-4 rounded-md">
+                    <button className="border-2 border-black py-1 mt-4 rounded-md" onClick={()=>{
+                      navigate('/Profile')
+                    }}>
                       Contact Me
                     </button>
                   </div>
@@ -424,13 +424,13 @@ export const DetailCVTemplate = () => {
                   ))}
                 </div>
               </div>
-
               <div className="flex gap-3 bg-slate-200 p-3 rounded-md">
-                <Avatar size={40} src={User?.avatar}/>
+                <Avatar size={40} src={User?.avatar} />
                 <div className=" w-full">
                   <form action="">
                     <textarea
                       placeholder="ID"
+                      value={mes}
                       className="w-full "
                       onChange={(e) => {
                         setMes(e.target.value);
@@ -442,6 +442,7 @@ export const DetailCVTemplate = () => {
                       <div>
                         <Rate
                           className="my-3"
+                          value={star}
                           onChange={(e) => {
                             setStar(e);
                           }}
@@ -452,21 +453,27 @@ export const DetailCVTemplate = () => {
                     <button
                       type="button"
                       className=" bg-blue-700 text-white px-3 py-1 rounded-md"
-                      // onClick={async() => {
-                      //   try {
-                      //     await nguoiDung.postComment({
-                      //       id: 0,
-                      //       maCongViec: 0,
-                      //       maNguoiBinhLuan: 0,
-                      //       ngayBinhLuan: "string",
-                      //       noiDung: "string",
-                      //       saoBinhLuan: 0,
-                      //     });
-                      //     console.log('a')
-                      //   } catch (error) {
-                      //     console.log('b')
-                      //   }
-                      // }}
+                      onClick={async () => {
+                        if (mes || star) {
+                          try {
+                            await nguoiDung.postComment({
+                              maCongViec: state,
+                              maNguoiBinhLuan: User?.id,
+                              noiDung: mes,
+                              saoBinhLuan: star ,
+                              ngayBinhLuan: new Date().toISOString(),
+                            });
+                            message.success("ok tin nhắn sẽ được soi");
+                            refetch();
+                            setMes("");
+                            setStar(0);
+                          } catch (error) {
+                            message.error("Chưa đăng nhập nè");
+                          }
+                        } else {
+                          message.error("có gì đâu mà nhấn");
+                        }
+                      }}
                     >
                       Send
                     </button>

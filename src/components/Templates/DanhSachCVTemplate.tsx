@@ -1,10 +1,19 @@
-import { Button, Pagination, Popover, Rate, Select, Switch } from "antd";
+import {
+  Avatar,
+  Button,
+  Pagination,
+  Popover,
+  Rate,
+  Select,
+  Switch,
+} from "antd";
 import { useGetPageCV, useSearchByMaLoai } from "../../Hook/Api/useCongViec";
 import { useState } from "react";
 import cn from "classnames";
 import { useData } from "../../constants/Context";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../constants";
+import { useGetDetailUserById } from "../../Hook/Api/useUser";
 
 export const DanhSachCVTemplate = () => {
   const { data, setData } = useData();
@@ -12,7 +21,8 @@ export const DanhSachCVTemplate = () => {
   const { data: pageCV } = useGetPageCV(page);
   const { data: resultSearch } = useSearchByMaLoai(data?.maChiTietCV as number);
   const navigate = useNavigate();
-  console.log(data);
+  const [id ,setid] =useState<number>(1)
+  const {data:info} = useGetDetailUserById(id)
 
   return (
     <div>
@@ -108,7 +118,7 @@ export const DanhSachCVTemplate = () => {
         )}
       </div>
 
-      <div className="grid 2xl:grid-cols-5 grid-cols-3 mx-10 my-10  ">
+      <div className="grid 2xl:grid-cols-6 xl:grid-cols-4 grid-cols-3 mx-10 my-10  ">
         {resultSearch
           ? resultSearch?.map((item) => {
               const { congViec } = item;
@@ -121,6 +131,10 @@ export const DanhSachCVTemplate = () => {
                   }}
                 >
                   <img src={congViec.hinhAnh} alt="" className="w-full" />
+                  <div className="mt-1 flex items-center gap-1">
+                    <Avatar src={item.avatar} size={35} />
+                    <p>{item.tenNguoiTao}</p>
+                  </div>
                   <div className="h-[100px] ">
                     <p className=" text-wrap h-[50px] truncate">
                       <span className="font-[600]">Name: </span>
@@ -167,49 +181,63 @@ export const DanhSachCVTemplate = () => {
                 </div>
               );
             })
-          : pageCV?.data.map((item) => (
-              <div
-                className="p-3 hover:p-0 mx-3 cursor-pointer"
-                key={item.id}
-                onClick={() => {
-                  navigate(PATH.Detail,{state:item.id});
-                }}
-              >
-                <img src={item.hinhAnh} alt="" className="w-full" />
-                <div className="h-[100px] ">
-                  <p className=" text-wrap h-[50px] truncate">
-                    <span className="font-[600]">Name: </span>
-                    <Popover content={item.tenCongViec} title="Title">
-                      {item.tenCongViec}
-                    </Popover>
-                  </p>
-                  <p className=" text-wrap h-[50px] truncate">
-                    <span className="font-[600]">Mô tả: </span>
-                    <Popover content={item.moTaNgan} title="Title">
-                      {item.moTaNgan}
-                    </Popover>
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Rate value={item.saoCongViec} disabled allowHalf count={1} />
-                  <p>{item.saoCongViec}</p>
-                </div>
-                <hr className="h-[3px] my-2" />
+          : pageCV?.data.map((item) => {
+              if(item.nguoiTao !=id){
+                setid(item.nguoiTao)
+              }
+              return (
                 <div
-                  className="flex justify-between items-center mx-1"
-                  id="like"
+                  className="p-3 hover:p-0 mx-3 cursor-pointer"
+                  key={item.id}
+                  onClick={() => {
+                    navigate(PATH.Detail, { state: item.id });
+                  }}
                 >
-                  <Rate
-                    character={<i className="fa-solid fa-heart"></i>}
-                    count={1}
-                  />
-                  <p>
-                    <span className="font-[600]">STARTING AT: </span>$
-                    {item.giaTien}
-                  </p>
+                  <img src={item.hinhAnh} alt="" className="w-full" />
+                  <div className="mt-1 flex items-center gap-1">
+                    <Avatar size={35} src={info?.avatar} />
+                    <p>{info?.name}</p>
+                  </div>
+                  <div className="h-[100px] ">
+                    <p className=" text-wrap h-[50px] truncate">
+                      <span className="font-[600]">Name: </span>
+                      <Popover content={item.tenCongViec} title="Title">
+                        {item.tenCongViec}
+                      </Popover>
+                    </p>
+                    <p className=" text-wrap h-[50px] truncate">
+                      <span className="font-[600]">Mô tả: </span>
+                      <Popover content={item.moTaNgan} title="Title">
+                        {item.moTaNgan}
+                      </Popover>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Rate
+                      value={item.saoCongViec}
+                      disabled
+                      allowHalf
+                      count={1}
+                    />
+                    <p>{item.saoCongViec}</p>
+                  </div>
+                  <hr className="h-[3px] my-2" />
+                  <div
+                    className="flex justify-between items-center mx-1"
+                    id="like"
+                  >
+                    <Rate
+                      character={<i className="fa-solid fa-heart"></i>}
+                      count={1}
+                    />
+                    <p>
+                      <span className="font-[600]">STARTING AT: </span>$
+                      {item.giaTien}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
       </div>
 
       <Pagination

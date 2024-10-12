@@ -12,7 +12,7 @@ export const congViec = {
     searchByName: (value: string) => api.get<HttpResponse<SearchCV[]>>(`/cong-viec/lay-danh-sach-cong-viec-theo-ten/${value}`),
 
     searchMenuCV: () => api.get<HttpResponse<MenuCV[]>>('/cong-viec/lay-menu-loai-cong-viec'),
-    getPageCV: (value: number) => api.get<HttpResponse<PageCV>>(`/cong-viec/phan-trang-tim-kiem?pageIndex=${value}&pageSize=10`),
+    getPageCV: (value: number) => api.get<HttpResponse<PageCV>>(`/cong-viec/phan-trang-tim-kiem?pageIndex=${value}&pageSize=12`),
 
     searchByMaChiTietLoai: (value: number) => api.get<HttpResponse<SearchCV[]>>(`/cong-viec/lay-cong-viec-theo-chi-tiet-loai/${value}`),
 
