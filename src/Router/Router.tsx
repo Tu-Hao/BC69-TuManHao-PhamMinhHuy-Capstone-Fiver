@@ -4,6 +4,7 @@ import { Home } from "../Pages/Home";
 import { PATH } from "../constants";
 import { DSCV } from "../Pages/DSCV";
 import { ListNType } from "../Pages/ListNType";
+import { DetailCV } from "../Pages/DetailCV";
 
 export const routers = () =>
   useRoutes([
@@ -26,7 +27,11 @@ export const routers = () =>
         {
           path:PATH.LNTCV,
           element:<ListNType/>
-        }
+        },
+        {
+          path:PATH.Detail,
+          element:<DetailCV/>
+        },
       ],
     }
   ]);

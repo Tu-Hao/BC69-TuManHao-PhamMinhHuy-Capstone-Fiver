@@ -8,14 +8,15 @@ import ReactPlayer from "react-player";
 import { sleep } from "../../utils/sleep";
 import cn from "classnames";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PATH } from "../../constants";
 
 export const HomeTemplate = () => {
   const { data: listTypeCV } = useGetTypeCV();
   const { data: detailCV } = useGetDetailTypeCV();
   const [valueSearch, setValueSearch] = useState<string>("");
-
   const { data: resultSearch } = useSearchByName(valueSearch);
+  const navigate = useNavigate();
 
   return (
     <div className="mx-[100px] my-14 xl:mx-[150px] xl:my-20 2xl:mx-[252px] 2xl:my-20">
@@ -23,8 +24,8 @@ export const HomeTemplate = () => {
         <div className="flex justify-center ">
           <img src="/image/hero-lg-x1.png" alt="" className=" " />
         </div>
-        <div className="w-[50%] left-[25%] top-[30%] absolute flex flex-col items-center z-10 ">
-          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[30px] 2xl:font-[700] xl:text-[45px] ">
+        <div className="w-[50%] left-[25%] top-[30%] 2xl:top-[20%] absolute flex flex-col items-center z-10 ">
+          <p className=" text-center text-white font-[500] text-[30px]  2xl:text-[50px] 2xl:font-[700] xl:text-[45px] ">
             Find the right freelance service, right away
           </p>
           <div className="w-full my-2">
@@ -63,7 +64,7 @@ export const HomeTemplate = () => {
                         <p>{item.congViec.moTaNgan}</p>
                         <div className="flex justify-between items-center">
                           <p className="font-[600]">
-                            Đánh giá:{" "}
+                            Đánh giá:
                             <Rate value={item.congViec.danhGia} disabled />
                           </p>
                           <p>Giá: {item.congViec.giaTien}</p>
@@ -104,7 +105,13 @@ export const HomeTemplate = () => {
           {detailCV?.map((item) => {
             if (item.hinhAnh && item.dsChiTietLoai.length != 0) {
               return (
-                <div key={item.id} className="p-3 ">
+                <div
+                  key={item.id}
+                  className="p-3 "
+                  onClick={() => {
+                    navigate(PATH.DSCV);
+                  }}
+                >
                   <div className="bg-green-600 px-3 py-2 rounded-md">
                     <div className="h-[150px] text-white ">
                       <p>{item.tenNhom}</p>
@@ -225,7 +232,7 @@ export const HomeTemplate = () => {
               <ReactPlayer
                 url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/plfa6gdjihpdvr10rchl"
                 width={"100%"}
-                height={"100%"}
+                height={250}
                 light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173414/testimonial-video-still-naadam.jpg"
               />
               <div className="">
@@ -250,7 +257,8 @@ export const HomeTemplate = () => {
               <ReactPlayer
                 url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
                 width={"100%"}
-                height={"100%"}
+                height={250}
+
                 light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173396/testimonial-video-still-lavender.jpg"
               />
               <div className="">
@@ -275,7 +283,8 @@ export const HomeTemplate = () => {
               <ReactPlayer
                 url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
                 width={"100%"}
-                height={"100%"}
+                height={250}
+
                 light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173395/testimonial-video-still-haerfest.jpg"
               />
               <div className="">
@@ -297,7 +306,8 @@ export const HomeTemplate = () => {
               <ReactPlayer
                 url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
                 width={"100%"}
-                height={"100%"}
+                height={250}
+
                 light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173399/testimonial-video-still-rooted.jpg"
               />
               <div className="">
@@ -321,16 +331,16 @@ export const HomeTemplate = () => {
 
       <div>
         <p className="my-5 text-[50px]">Explore the marketplace</p>
-        <div className="flex justify-start items-center flex-wrap px-[100px] gap-x-2 gap-y-10 h-[400px]">
-          <div className="w-[160px] flex flex-col items-center">
+        <div className="flex justify-evenly 2xl:justify-start items-center flex-wrap [100px] px-[50px] 2xl:px-[0px] gap-x-2 gap-y-5 h-[400px]">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/programming-tech.png"
               alt=""
-              className="w-[55px] h-[60px] border-b-4 pb-2"
+              className="w-[55px]  h-[60px] border-b-4 pb-2"
             />
             <p className="mt-2 ">Programming & Tech</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/ai-services.png"
               alt=""
@@ -338,7 +348,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">AI & services</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/business.png"
               alt=""
@@ -346,7 +356,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Business</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/consulting.png"
               alt=""
@@ -354,7 +364,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Conssulting</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/digital-marketing.png"
               alt=""
@@ -362,7 +372,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Digital & Marketing</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/graphics-design.png"
               alt=""
@@ -370,7 +380,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Graphic & Design</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/music-audio.png"
               alt=""
@@ -378,7 +388,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Music & Audio</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/video-animation.png"
               alt=""
@@ -386,7 +396,7 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Video & Animatioin</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center">
+          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
             <img
               src="/image/writing-translation.png"
               alt=""

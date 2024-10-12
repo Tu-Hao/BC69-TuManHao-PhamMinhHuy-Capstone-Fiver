@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 const Dashboard: React.FC = () => {
+
   return (
     <div className="sticky top-0 left-0  w-[15%] h-full bg-gray-800 text-white p-4">
       <h2 className="text-3xl font-bold mb-4 text-lime-500">Dashboard</h2>
@@ -27,6 +29,7 @@ const Dashboard: React.FC = () => {
           </Link>
         </li>
       </ul>
+
     </div>
   );
 };

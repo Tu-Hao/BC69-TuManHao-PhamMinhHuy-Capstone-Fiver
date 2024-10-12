@@ -88,9 +88,8 @@ const RegisterModal: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center ml-3">
-      {/* Kiểm tra xem user đã đăng nhập hay chưa */}
       {user ? (
-        <i></i>
+        <></>
       ) : (
         // Button to open the modal
         <Button

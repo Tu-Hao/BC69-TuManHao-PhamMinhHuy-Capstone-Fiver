@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Input, Pagination, message } from "antd";
+import { Table, Button, Modal, Input, Pagination, message, Radio } from "antd";
 import axiosInstance from "../constants/api";
 import RegisterAdminModal from "../components/RegisterAdminModal";
 
@@ -23,15 +23,33 @@ const AdminUserManagement: React.FC = () => {
   const [total, setTotal] = useState(0); // Total number of users
   const [loading, setLoading] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null); // For editing
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState(""); // Store search keyword
 
-  // Fetch users with pagination
-  const fetchUsers = (pageNumber: number) => {
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setIsModalVisible(false);
+  };
+
+  // Fetch users with pagination and search
+  const fetchUsers = (pageNumber: number, keyword: string = "") => {
     setLoading(true);
     axiosInstance
-      .get(`/api/users?page=${pageNumber}`)
+      .get(`/api/users/phan-trang-tim-kiem`, {
+        params: {
+          pageIndex: pageNumber,
+          pageSize: 10, // Display 10 users per page
+          keyword, // Pass the search keyword
+        },
+      })
       .then((response) => {
-        setUsers(response.data.content);
-        setTotal(response.data.total); // Assuming total count is returned
+        const data = response.data;
+        setUsers(data.content.data); // Set the users to display in the table
+        setTotal(data.content.totalRow); // Set total number of users for pagination
       })
       .catch(() => {
         message.error("Error fetching users");
@@ -42,49 +60,68 @@ const AdminUserManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUsers(page); // Load users on page load
+    fetchUsers(page, searchKeyword); // Load users on page load and when page changes
   }, [page]);
 
-  // Handle user deletion
+  // Handle user deletion with confirmation
   const handleDelete = (id: number) => {
-    axiosInstance.delete(`/api/users/${id}`).then(() => {
-      message.success("User deleted successfully");
-      fetchUsers(page); // Refresh the table
-    }).catch(() => {
-      message.error("Error deleting user");
+    Modal.confirm({
+      title: "Are you sure you want to delete this user?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      cancelText: "No",
+      onOk() {
+        // Proceed to delete the user
+        axiosInstance
+          .delete(`/api/users`, {
+            params: { id }, // Send id as query parameter
+          })
+          .then(() => {
+            message.success("User deleted successfully");
+            fetchUsers(page, searchKeyword); // Refresh the table
+          })
+          .catch(() => {
+            message.error("Error deleting user");
+          });
+      },
     });
   };
 
-  // Handle user edit modal
+  // Handle user edit
   const handleEdit = (user: User) => {
     setEditUser(user); // Set the current user for editing
-    Modal.confirm({
-      title: `Edit ${user.name}`,
-      content: (
-        <div>
-          <Input placeholder="Name" defaultValue={user.name} onChange={(e) => setEditUser({...editUser!, name: e.target.value})}/>
-          <Input placeholder="Phone" defaultValue={user.phone} onChange={(e) => setEditUser({...editUser!, phone: e.target.value})}/>
-          <Input placeholder="Birthday" defaultValue={user.birthday} onChange={(e) => setEditUser({...editUser!, birthday: e.target.value})}/>
-          <Input placeholder="Gender" defaultValue={user.gender ? 'Male' : 'Female'} onChange={(e) => setEditUser({...editUser!, gender: e.target.value === 'Male'})}/>
-          <Input placeholder="Role" defaultValue={user.role} onChange={(e) => setEditUser({...editUser!, role: e.target.value})}/>
-          <Input placeholder="Skills" defaultValue={user.skill.join(", ")} onChange={(e) => setEditUser({...editUser!, skill: e.target.value.split(", ")})}/>
-          <Input placeholder="Certifications" defaultValue={user.certification.join(", ")} onChange={(e) => setEditUser({...editUser!, certification: e.target.value.split(", ")})}/>
-        </div>
-      ),
-      onOk() {
-        if (editUser) {
-          axiosInstance
-            .put(`/api/users/${editUser.id}`, editUser)
-            .then(() => {
-              message.success("User updated successfully");
-              fetchUsers(page);
-            })
-            .catch(() => {
-              message.error("Error updating user");
-            });
-        }
-      },
-    });
+    setIsEditModalVisible(true); // Open the modal for editing
+  };
+
+  // Handle closing the edit modal
+  const handleEditModalCancel = () => {
+    setIsEditModalVisible(false); // Close the modal
+    setEditUser(null); // Clear the selected user
+  };
+
+  // Handle saving the user edits
+  const handleSaveEdit = () => {
+    if (editUser) {
+      axiosInstance
+        .put(`/api/users/${editUser.id}`, editUser, {
+          params: { id: editUser.id }, // Pass the user id as a query parameter
+        })
+        .then(() => {
+          message.success("User updated successfully");
+          fetchUsers(page, searchKeyword); // Refresh the table
+          setIsEditModalVisible(false); // Close the modal
+        })
+        .catch(() => {
+          message.error("Error updating user");
+        });
+    }
+  };
+
+  // Handle search input and press enter
+  const handleSearch = (value: string) => {
+    setSearchKeyword(value);
+    setPage(1); // Reset to page 1 when starting a new search
+    fetchUsers(1, value); // Fetch users with search keyword
   };
 
   // Columns for the table
@@ -114,30 +151,29 @@ const AdminUserManagement: React.FC = () => {
     },
     { title: "Role", dataIndex: "role", key: "role" },
     {
-        title: "Skills",
-        dataIndex: "skill",
-        key: "skill",
-        render: (skills: string[]) => (
-          <ul>
-            {(skills || []).map((skill, index) => (
-              <li key={index}>{skill}</li>
-            ))}
-          </ul>
-        ),
-      },
-      {
-        title: "Certifications",
-        dataIndex: "certification",
-        key: "certification",
-        render: (certifications: string[]) => (
-          <ul>
-            {(certifications || []).map((certification, index) => (
-              <li key={index}>{certification}</li>
-            ))}
-          </ul>
-        ),
-      },
-      
+      title: "Skills",
+      dataIndex: "skill",
+      key: "skill",
+      render: (skills: string[]) => (
+        <ul>
+          {(skills || []).map((skill, index) => (
+            <li key={index}>{skill}</li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      title: "Certifications",
+      dataIndex: "certification",
+      key: "certification",
+      render: (certifications: string[]) => (
+        <ul>
+          {(certifications || []).map((certification, index) => (
+            <li key={index}>{certification}</li>
+          ))}
+        </ul>
+      ),
+    },
     {
       title: "Actions",
       key: "actions",
@@ -155,21 +191,20 @@ const AdminUserManagement: React.FC = () => {
   return (
     <div className="p-6 ">
       <h1>User Management</h1>
-      <Button
-        type="primary"
-        onClick={() =>
-          Modal.confirm({
-            title: "Add New User",
-            content: <RegisterAdminModal />, // Use the register modal for new user
-            okText: "Add",
-            onOk() {
-              // Submit new user logic
-            },
-          })
-        }
-      >
+      <Button onClick={showModal} className="bg-transparent text-lime-500 !border-lime-500 hover:!bg-lime-500 hover:!text-neutral-50">
         Add New User
       </Button>
+
+      {/* Search Input */}
+      <Input.Search
+        placeholder="Search users"
+        enterButton="Search"
+        onSearch={handleSearch}
+        style={{ marginBottom: 20, marginTop: 10 }}
+      />
+
+      {/* Pass the modal visibility control as props */}
+      <RegisterAdminModal visible={isModalVisible} onCancel={hideModal} />
 
       <Table
         columns={columns}
@@ -186,6 +221,90 @@ const AdminUserManagement: React.FC = () => {
         pageSize={10}
         onChange={(pageNumber) => setPage(pageNumber)}
       />
+
+      {/* Edit User Modal */}
+      <Modal
+        title={`Edit ${editUser?.name}`}
+        visible={isEditModalVisible}
+        onCancel={handleEditModalCancel}
+        onOk={handleSaveEdit}
+      >
+        <Input
+          placeholder="Name"
+          value={editUser?.name}
+          onChange={(e) =>
+            setEditUser((prev) => ({ ...prev!, name: e.target.value }))
+          }
+        />
+        <Input
+          placeholder="Email"
+          value={editUser?.email}
+          onChange={(e) =>
+            setEditUser((prev) => ({ ...prev!, email: e.target.value }))
+          }
+        />
+        <Input
+          placeholder="Phone"
+          value={editUser?.phone}
+          onChange={(e) =>
+            setEditUser((prev) => ({ ...prev!, phone: e.target.value }))
+          }
+        />
+        <Input
+          placeholder="Birthday"
+          value={editUser?.birthday}
+          onChange={(e) =>
+            setEditUser((prev) => ({ ...prev!, birthday: e.target.value }))
+          }
+        />
+
+        {/* Gender Radio Group */}
+        <Radio.Group
+          onChange={(e) =>
+            setEditUser((prev) => ({
+              ...prev!,
+              gender: e.target.value === "true",
+            }))
+          }
+          value={editUser?.gender ? "true" : "false"}
+        >
+          <Radio value="true">Male</Radio>
+          <Radio value="false">Female</Radio>
+        </Radio.Group>
+        {/* Skill Input */}
+        <Input
+          placeholder="Skills"
+          value={editUser?.skill?.join(", ")}
+          onChange={(e) =>
+            setEditUser((prev) => ({
+              ...prev!,
+              skill: e.target.value.split(", "),
+            }))
+          }
+        />
+
+        {/* Certification Input */}
+        <Input
+          placeholder="Certifications"
+          value={editUser?.certification?.join(", ")}
+          onChange={(e) =>
+            setEditUser((prev) => ({
+              ...prev!,
+              certification: e.target.value.split(", "),
+            }))
+          }
+        />
+        {/* Role Radio Group */}
+        <Radio.Group
+          onChange={(e) =>
+            setEditUser((prev) => ({ ...prev!, role: e.target.value }))
+          }
+          value={editUser?.role}
+        >
+          <Radio value="USER">USER</Radio>
+          <Radio value="ADMIN">ADMIN</Radio>
+        </Radio.Group>
+      </Modal>
     </div>
   );
 };

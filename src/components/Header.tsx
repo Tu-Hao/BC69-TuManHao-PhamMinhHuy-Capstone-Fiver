@@ -216,48 +216,6 @@ const Header: React.FC = () => {
           <LoginModal />
           <RegisterModal />
         </div>
-
-        {/* Mobile Menu Icon and Dropdown */}
-        <div className="md:hidden flex items-center relative">
-          <button onClick={toggleDropdown}>
-            <FontAwesomeIcon icon={faChevronDown} className="text-gray-700" />
-          </button>
-
-          {/* Dropdown Menu for Mobile */}
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
-              <a
-                href="#"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Fiverr Pro
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Explore
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                <FontAwesomeIcon icon={faGlobe} className="mr-1" />
-                English
-              </a>
-              <a
-                href="https://www.fiverr.com/start_selling?source=top_nav"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Become a Seller
-              </a>
-              <div className="border-t mt-2">
-                <LoginModal />
-                <RegisterModal />
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </header>
   );

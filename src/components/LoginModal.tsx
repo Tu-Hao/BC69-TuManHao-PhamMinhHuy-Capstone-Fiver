@@ -70,20 +70,6 @@ const LoginModal: React.FC = () => {
     message.info("You have logged out !");
   };
 
-  // Call this to show the admin redirection modal if available
-  useEffect(() => {
-    if (user?.role === 'ADMIN') {
-      Modal.confirm({
-        title: 'Admin Access',
-        content: 'You are an admin. Do you want to go to the admin page?',
-        okText: 'Yes',
-        cancelText: 'No',
-        onOk() {
-          navigate('/admin/QuanLyNguoiDung'); // Redirect to admin page
-        },
-      });
-    }
-  }, [user, navigate]);
 
   // Define the menu items
   const menuItems = [
@@ -97,12 +83,30 @@ const LoginModal: React.FC = () => {
         </div>
       ),
     },
+    ...(user?.role === "ADMIN" ? [
+      {
+        key: "admin",
+        label: (
+          <div className="text-center">
+            <Button
+              type="link"
+              onClick={() => navigate("/admin/QuanLyNguoiDung")}
+            >
+              Admin Page
+            </Button>
+          </div>
+        ),
+      },
+    ] : []), // Show Admin Page only if the user is an admin
     {
       key: "logout",
       label: (
+        <div className="flex place-content-center">
         <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
           Logout
         </Button>
+        </div>
+
       ),
     },
   ];

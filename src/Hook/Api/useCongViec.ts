@@ -66,3 +66,15 @@ export const useSearchByMaLoai = (value: number) => {
         data: query.data?.data.content
     }
 }
+
+//getdetail
+export const useGetDetailCV = (value: number) => {
+    const query = useQuery({
+        queryKey: ['DetailCV', value],
+        queryFn: () => congViec.getDetailCV(value)
+    })
+    return {
+        ...query,
+        data: query.data?.data.content[0]
+    }
+}

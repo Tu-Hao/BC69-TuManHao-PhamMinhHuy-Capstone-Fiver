@@ -1,3 +1,5 @@
 export const PATH = {
-    DSCV:'/DSCV'
+    DSCV:'/DSCV',
+    LNTCV:'/LNTCV',
+    Detail:'/Detail'
 }
