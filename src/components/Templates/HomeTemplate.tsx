@@ -18,7 +18,7 @@ export const HomeTemplate = () => {
   const { data: resultSearch } = useSearchByName(valueSearch);
 
   return (
-    <div className="mx-[100px] my-8 xl:mx-[150px] xl:my-14 2xl:mx-[252px] 2xl:my-16">
+    <div className="mx-[100px] my-14 xl:mx-[150px] xl:my-20 2xl:mx-[252px] 2xl:my-20">
       <div className=" relative">
         <div className="flex justify-center ">
           <img src="/image/hero-lg-x1.png" alt="" className=" " />

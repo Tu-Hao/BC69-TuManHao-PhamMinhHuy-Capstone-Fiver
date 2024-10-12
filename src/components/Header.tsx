@@ -26,7 +26,7 @@ const Header: React.FC = () => {
     navigate("/"); // Redirect to homepage when the logo is clicked
   };
   return (
-    <header className="bg-white shadow-lg">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo */}
         <div className="flex-shrink-0">

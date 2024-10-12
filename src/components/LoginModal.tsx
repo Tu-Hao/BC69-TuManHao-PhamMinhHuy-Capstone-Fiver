@@ -1,11 +1,11 @@
 // // src/components/LoginModal.tsx
-import React, { useState } from "react";
-import { Modal, Button, Input, message, Dropdown, Menu } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Input, message, Dropdown } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../redux/authSlice";
 import { RootState } from "../redux/store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 // Define login validation schema using Zod
@@ -22,6 +22,7 @@ const LoginModal: React.FC = () => {
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -35,9 +36,11 @@ const LoginModal: React.FC = () => {
         {
           headers: {
             TokenCyberSoft:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g"
           },
-        }
+
+        },
+
       );
 
       const { user, token } = response.data.content;
@@ -61,35 +64,48 @@ const LoginModal: React.FC = () => {
       }
     }
   };
-  
 
   const handleLogout = () => {
     dispatch(logout());
     message.info("You have logged out !");
   };
 
-// Define the menu items
-const menuItems = [
-  {
-    key: "profile",
-    label: (
-      <div  className="text-center" >
-      <Link to={`/Profile/${user?.id}`} >
-        Profile
-      </Link>
-      </div>
+  // Call this to show the admin redirection modal if available
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      Modal.confirm({
+        title: 'Admin Access',
+        content: 'You are an admin. Do you want to go to the admin page?',
+        okText: 'Yes',
+        cancelText: 'No',
+        onOk() {
+          navigate('/admin/QuanLyNguoiDung'); // Redirect to admin page
+        },
+      });
+    }
+  }, [user, navigate]);
 
-    ),
-  },
-  {
-    key: "logout",
-    label: (
-      <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
-        Logout
-      </Button>
-    ),
-  },
-];
+  // Define the menu items
+  const menuItems = [
+    {
+      key: "profile",
+      label: (
+        <div className="text-center">
+          <Link to={`/Profile/${user?.id}`}>
+            Profile
+          </Link>
+        </div>
+      ),
+    },
+    {
+      key: "logout",
+      label: (
+        <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
+          Logout
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className="flex justify-center items-center ">
