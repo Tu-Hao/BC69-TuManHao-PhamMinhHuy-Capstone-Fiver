@@ -36,11 +36,9 @@ const LoginModal: React.FC = () => {
         {
           headers: {
             TokenCyberSoft:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g"
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g",
           },
-
-        },
-
+        }
       );
 
       const { user, token } = response.data.content;
@@ -70,43 +68,41 @@ const LoginModal: React.FC = () => {
     message.info("You have logged out !");
   };
 
-
   // Define the menu items
   const menuItems = [
     {
       key: "profile",
       label: (
         <div className="text-center">
-          <Link to={`/Profile/${user?.id}`}>
-            Profile
-          </Link>
+          <Link to={`/Profile/${user?.id}`}>Profile</Link>
         </div>
       ),
     },
-    ...(user?.role === "ADMIN" ? [
-      {
-        key: "admin",
-        label: (
-          <div className="text-center">
-            <Button
-              type="link"
-              onClick={() => navigate("/admin/QuanLyNguoiDung")}
-            >
-              Admin Page
-            </Button>
-          </div>
-        ),
-      },
-    ] : []), // Show Admin Page only if the user is an admin
+    ...(user?.role === "ADMIN"
+      ? [
+          {
+            key: "admin",
+            label: (
+              <div className="text-center">
+                <Button
+                  type="link"
+                  onClick={() => navigate("/admin/QuanLyNguoiDung")}
+                >
+                  Admin Page
+                </Button>
+              </div>
+            ),
+          },
+        ]
+      : []), // Show Admin Page only if the user is an admin
     {
       key: "logout",
       label: (
         <div className="flex place-content-center">
-        <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
-          Logout
-        </Button>
+          <Button className="bg-lime-500 text-stone-50" onClick={handleLogout}>
+            Logout
+          </Button>
         </div>
-
       ),
     },
   ];
@@ -121,9 +117,13 @@ const LoginModal: React.FC = () => {
             menu={{
               items: menuItems, // Pass the menuItems array directly
             }}
-            trigger={['click']}
+            trigger={["click"]}
           >
-            <i className="fa-solid fa-user bg-lime-500 h-9 w-9 text-center place-content-center rounded-full cursor-pointer"></i>
+            <img
+              className="h-10 w-10 text-center place-content-center rounded-full cursor-pointer"
+              src={user.avatar || "/img/user-default.jpg"}
+              alt="Avatar"
+            ></img>
           </Dropdown>
         </div>
       ) : (
