@@ -8,7 +8,7 @@ import ReactPlayer from "react-player";
 import { sleep } from "../../utils/sleep";
 import cn from "classnames";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { PATH } from "../../constants";
 
 export const HomeTemplate = () => {
@@ -45,8 +45,8 @@ export const HomeTemplate = () => {
                 )}
               >
                 {resultSearch?.map((item) => (
-                  <div className="p-3">
-                    <div className="flex gap-2 text-[15px] items-center">
+                  <div className=" cursor-pointer " >
+                    <div className="flex gap-2 text-[15px] items-center my-3 hover:bg-slate-200">
                       <img
                         src={item.congViec.hinhAnh}
                         alt=""
@@ -113,12 +113,12 @@ export const HomeTemplate = () => {
                   }}
                 >
                   <div className="bg-green-600 px-3 py-2 rounded-md">
-                    <div className="h-[150px] text-white ">
+                    <div className="2xl:h-[150px] h-[125px] text-white ">
                       <p>{item.tenNhom}</p>
                       {item.dsChiTietLoai.map((item2) => (
                         <p
                           key={item2.id}
-                          className="text-[20px] px-3 font-medium"
+                          className="2xl:text-[20px] text-[16px] ps-3 font-medium hover:underline"
                         >
                           {item2.tenChiTiet}
                         </p>

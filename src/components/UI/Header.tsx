@@ -196,7 +196,7 @@ export const Header = () => {
             return (
               <Dropdown
                 menu={{ items }}
-                className="mx-3 "
+                className="mx-3 cursor-pointer"
                 key={item.id}
                 trigger={["click"]}
               >

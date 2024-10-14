@@ -1,13 +1,19 @@
 import {
   Avatar,
   Button,
+  Cascader,
+  Divider,
   Pagination,
   Popover,
   Rate,
   Select,
   Switch,
 } from "antd";
-import { useGetPageCV, useSearchByMaLoai } from "../../Hook/Api/useCongViec";
+import {
+  useGetMenuCV,
+  useGetPageCV,
+  useSearchByMaLoai,
+} from "../../Hook/Api/useCongViec";
 import { useState } from "react";
 import cn from "classnames";
 import { useData } from "../../constants/Context";
@@ -18,11 +24,12 @@ import { useGetDetailUserById } from "../../Hook/Api/useUser";
 export const DanhSachCVTemplate = () => {
   const { data, setData } = useData();
   const [page, setPage] = useState<number>(1);
+  const [id, setid] = useState<number>(2);
   const { data: pageCV } = useGetPageCV(page);
   const { data: resultSearch } = useSearchByMaLoai(data?.maChiTietCV as number);
+  const { data: info } = useGetDetailUserById(id);
+  const { data: menu } = useGetMenuCV();
   const navigate = useNavigate();
-  const [id ,setid] =useState<number>(2)
-  const {data:info} = useGetDetailUserById(id)
 
   return (
     <div>
@@ -38,59 +45,64 @@ export const DanhSachCVTemplate = () => {
           )}
         </div>
         <div
-          className={cn("flex justify-between ", {
+          className={cn("flex justify-between 2xl:flex-row flex-col gap-3", {
             "mt-3": data?.tenNhom,
           })}
         >
-          <div>
-            <Select
-              defaultValue="Category"
-              style={{ width: 120 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-              ]}
+          <div className="flex gap-1 items-center ">
+            <Cascader
+              placeholder="Category"
+              className="truncate"
+              options={menu?.map((item) => ({
+                value: item.id,
+                label: <p>{item.tenLoaiCongViec}</p>,
+                children: item.dsNhomChiTietLoai.map((item2) => ({
+                  value: item2.id,
+                  label: <p>{item2.tenNhom}</p>,
+                  children: item2.dsChiTietLoai.map((item3) => ({
+                    value: item3.id,
+                    label: (
+                      <p
+                        onClick={() => {
+                          setData({
+                            maChiTietCV: item3.id,
+                            tenChiTietCV: item3.tenChiTiet,
+                            tenNhom: item2.tenNhom,
+                            tenLoai: item.tenLoaiCongViec,
+                          });
+                        }}
+                      >
+                        {item3.tenChiTiet}
+                      </p>
+                    ),
+                  })),
+                })),
+              }))}
+              onChange={(e) => {
+                if (!e) {
+                  setData(null);
+                }
+              }}
             />
             <Select
-              defaultValue="SerVice Options"
-              style={{ width: 120 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
+              defaultValue="Service Options"
+              style={{ width: "auto" }}
+              options={[]}
             />
             <Select
               defaultValue="Seller Details"
-              style={{ width: 120 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
+              style={{ width: "auto" }}
+              options={[]}
             />
             <Select
               defaultValue="Budget"
-              style={{ width: 120 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
+              style={{ width: "auto" }}
+              options={[]}
             />
             <Select
               defaultValue="Delivery Time"
-              style={{ width: 120 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
+              style={{ width: "auto" }}
+              options={[]}
             />
           </div>
           <div className="flex items-center gap-1">
@@ -182,8 +194,8 @@ export const DanhSachCVTemplate = () => {
               );
             })
           : pageCV?.data.map((item) => {
-              if(item.nguoiTao !=id){
-                setid(item.nguoiTao)
+              if (item.nguoiTao != id) {
+                setid(item.nguoiTao);
               }
               return (
                 <div

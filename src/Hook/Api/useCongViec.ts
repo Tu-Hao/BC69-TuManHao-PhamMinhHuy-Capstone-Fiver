@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { congViec } from "../../services/congViecService"
+import { SearchCV } from "../../@types/CongViec"
+import { useEffect, useState } from "react"
 
 //home
 export const useGetTypeCV = () => {
@@ -45,9 +47,9 @@ export const useGetMenuCV = () => {
     }
 }
 
-export const useGetPageCV = (value:number) => {
+export const useGetPageCV = (value: number) => {
     const query = useQuery({
-        queryKey: ['ListCV',value],
+        queryKey: ['ListCV', value],
         queryFn: () => congViec.getPageCV(value)
     })
     return {
@@ -67,7 +69,6 @@ export const useSearchByMaLoai = (value: number) => {
     }
 }
 
-//getdetail
 export const useGetDetailCV = (value: number) => {
     const query = useQuery({
         queryKey: ['DetailCV', value],
@@ -78,3 +79,4 @@ export const useGetDetailCV = (value: number) => {
         data: query.data?.data.content[0]
     }
 }
+
