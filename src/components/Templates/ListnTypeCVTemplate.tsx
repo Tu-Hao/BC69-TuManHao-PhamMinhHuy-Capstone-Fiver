@@ -1,4 +1,4 @@
-import { Carousel, Divider, Modal } from "antd";
+import { Carousel, Modal } from "antd";
 import { useState } from "react";
 import ReactPlayer from "react-player";
 import { useGetMenuCV } from "../../Hook/Api/useCongViec";
