@@ -9,6 +9,7 @@ import { routers } from "./Router/Router";
 import Profile from "./Pages/Profile";
 import AdminUserManagement from "./Pages/AdminUserManagement";
 import Dashboard from "./components/Dashboard";
+import JobManagement from "./Pages/JobManagement";
 
 // Tạo layout chứa Header và nội dung động
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -69,6 +70,21 @@ function App() {
           <div className="flex mt-16">
             <Dashboard />
             <AdminUserManagement />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/admin/QuanLyCongViec",
+      element: (
+        <div  className="flex flex-col h-screen">
+          <div>
+          <Header />
+          </div>
+
+          <div className="flex mt-16">
+            <Dashboard />
+            <JobManagement/>
           </div>
         </div>
       ),
