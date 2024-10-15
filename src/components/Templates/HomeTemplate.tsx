@@ -1,4 +1,4 @@
-import { Carousel, Input, Rate } from "antd";
+import { Carousel, Input, Modal, Rate } from "antd";
 import {
   useGetDetailTypeCV,
   useGetTypeCV,
@@ -8,7 +8,7 @@ import ReactPlayer from "react-player";
 import { sleep } from "../../utils/sleep";
 import cn from "classnames";
 import { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PATH } from "../../constants";
 
 export const HomeTemplate = () => {
@@ -16,6 +16,9 @@ export const HomeTemplate = () => {
   const { data: detailCV } = useGetDetailTypeCV();
   const [valueSearch, setValueSearch] = useState<string>("");
   const { data: resultSearch } = useSearchByName(valueSearch);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [url, setUrl] = useState<string>();
+
   const navigate = useNavigate();
 
   return (
@@ -45,9 +48,12 @@ export const HomeTemplate = () => {
                 )}
               >
                 {resultSearch?.map((item) => (
-                  <div className=" cursor-pointer " onClick={()=>{
-                    navigate(PATH.Detail, { state: item.id });
-                  }} >
+                  <div
+                    className=" cursor-pointer "
+                    onClick={() => {
+                      navigate(PATH.Detail, { state: item.id });
+                    }}
+                  >
                     <div className="flex gap-2 text-[15px] items-center my-3 hover:bg-slate-200">
                       <img
                         src={item.congViec.hinhAnh}
@@ -83,7 +89,13 @@ export const HomeTemplate = () => {
             <div className="flex gap-1 truncate hover:overflow-x-scroll w-full text-white items-center">
               {listTypeCV?.map((item) => {
                 return (
-                  <p className="px-2 whitespace-nowrap" key={item.id}>
+                  <p
+                    className="px-2 whitespace-nowrap"
+                    key={item.id}
+                    onClick={() => {
+                      navigate(PATH.DSCV);
+                    }}
+                  >
                     {item.tenLoaiCongViec}
                   </p>
                 );
@@ -146,7 +158,7 @@ export const HomeTemplate = () => {
         <div className="grid grid-cols-4 gap-4 mb-3">
           <div className="flex flex-col">
             <i className="text-[30px] fa-brands fa-buromobelexperte"></i>
-            <p className="text-[25px] xl:text-[30px] font-[600] h-[80px] pe-1">
+            <p className="text-[25px] xl:text-[30px] font-[600] h-[100px] pe-1">
               Over 700 categories
             </p>
             <p>
@@ -156,7 +168,7 @@ export const HomeTemplate = () => {
           </div>
           <div className="flex flex-col">
             <i className="text-[30px] fa-solid fa-bolt"></i>
-            <p className="text-[25px] xl:text-[30px] font-[600] h-[80px] pe-1">
+            <p className="text-[25px] xl:text-[30px] font-[600] h-[100px] pe-1">
               Clear, transparent pricing
             </p>
             <p>
@@ -166,7 +178,7 @@ export const HomeTemplate = () => {
           </div>
           <div className="flex flex-col">
             <i className="text-[30px] fa-solid fa-handshake-simple"></i>
-            <p className="text-[25px] xl:text-[30px] font-[600] h-[80px] pe-1">
+            <p className="text-[25px] xl:text-[30px] font-[600] h-[100px] pe-1">
               Quality work done faster
             </p>
             <p>
@@ -176,7 +188,7 @@ export const HomeTemplate = () => {
           </div>
           <div className="flex flex-col">
             <i className="text-[30px] fa-regular fa-circle"></i>
-            <p className="text-[25px] xl:text-[30px] font-[600] h-[80px] pe-1">
+            <p className="text-[25px] xl:text-[30px] font-[600] h-[100px] pe-1">
               24/7 award-winning support
             </p>
             <p>
@@ -189,6 +201,7 @@ export const HomeTemplate = () => {
           url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
           controls={true}
           width="100%"
+          height={"100%"}
         />
       </div>
 
@@ -214,7 +227,9 @@ export const HomeTemplate = () => {
             <li>A desire to get things done, without the hassle</li>
           </ul>
           <button className="border-1 rounded-md   font-[500] mt-5 bg-yellow-500 px-3 py-2">
-            Get started
+            <a href="https://pro.fiverr.com/categories/programming-tech/buy/website-development/e-commerce?source=LOHP_business_banner&expert_listings=true">
+              Get started
+            </a>
           </button>
         </div>
         <img src="/image/X1.png" alt="" />
@@ -231,12 +246,21 @@ export const HomeTemplate = () => {
         >
           <div>
             <div className="grid grid-cols-[40%,60%] gap-5 items-start">
-              <ReactPlayer
-                url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/plfa6gdjihpdvr10rchl"
-                width={"100%"}
-                height={250}
-                light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173414/testimonial-video-still-naadam.jpg"
-              />
+              <button
+                onClick={() => {
+                  setIsOpenModal(true);
+                  setUrl(
+                    "https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/plfa6gdjihpdvr10rchl"
+                  );
+                }}
+              >
+                <img
+                  className="relative"
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173414/testimonial-video-still-naadam.jpg"
+                  alt=""
+                />
+                <i className="fa-solid fa-play absolute top-[40%] text-[50px]  text-black/60"></i>
+              </button>
               <div className="">
                 <div className="flex items-center">
                   <p className="text-[20px]">
@@ -256,13 +280,21 @@ export const HomeTemplate = () => {
           </div>
           <div>
             <div className="grid grid-cols-[40%,60%] gap-5 items-start">
-              <ReactPlayer
-                url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
-                width={"100%"}
-                height={250}
-
-                light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173396/testimonial-video-still-lavender.jpg"
-              />
+              <button
+                onClick={() => {
+                  setIsOpenModal(true);
+                  setUrl(
+                    "https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
+                  );
+                }}
+              >
+                <img
+                  className="relative"
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173396/testimonial-video-still-lavender.jpg"
+                  alt=""
+                />{" "}
+                <i className="fa-solid fa-play absolute top-[40%] text-[50px]  text-black/60"></i>
+              </button>
               <div className="">
                 <div className="flex items-center">
                   <p className="text-[20px]">
@@ -282,13 +314,21 @@ export const HomeTemplate = () => {
           </div>
           <div>
             <div className="grid grid-cols-[40%,60%] gap-5 items-start">
-              <ReactPlayer
-                url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
-                width={"100%"}
-                height={250}
-
-                light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173395/testimonial-video-still-haerfest.jpg"
-              />
+              <button
+                onClick={() => {
+                  setIsOpenModal(true);
+                  setUrl(
+                    "https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
+                  );
+                }}
+              >
+                <img
+                  className="relative"
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173395/testimonial-video-still-haerfest.jpg"
+                  alt=""
+                />
+                <i className="fa-solid fa-play absolute top-[40%] text-[50px]  text-black/60"></i>
+              </button>
               <div className="">
                 <div className="flex items-center">
                   <p className="text-[20px]">Tim and Dan Joo, Co-Founders</p>
@@ -305,13 +345,21 @@ export const HomeTemplate = () => {
           </div>
           <div>
             <div className="grid grid-cols-[40%,60%] gap-2 items-start">
-              <ReactPlayer
-                url="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
-                width={"100%"}
-                height={250}
-
-                light="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173399/testimonial-video-still-rooted.jpg"
-              />
+              <button
+                onClick={() => {
+                  setIsOpenModal(true);
+                  setUrl(
+                    "https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/e0f330e4c8d6e3bf843a3bd3164fa275-1706087048062/How%20Fiverr%20Works%20EN%20Subs%2016x9"
+                  );
+                }}
+              >
+                <img
+                  className="relative"
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_560,dpr_1.0/v1/attachments/generic_asset/asset/42a6fd208670a0361b38bd72b47b9317-1599519173399/testimonial-video-still-rooted.jpg"
+                  alt=""
+                />
+                <i className="fa-solid fa-play absolute top-[40%] text-[50px]  text-black/60"></i>
+              </button>
               <div className="">
                 <div className="flex items-center">
                   <p className="text-[20px]">Kay Kim, Co-Founder</p>
@@ -334,7 +382,12 @@ export const HomeTemplate = () => {
       <div>
         <p className="my-5 text-[50px]">Explore the marketplace</p>
         <div className="flex justify-evenly 2xl:justify-start items-center flex-wrap [100px] px-[50px] 2xl:px-[0px] gap-x-2 gap-y-5 h-[400px]">
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/programming-tech.png"
               alt=""
@@ -342,7 +395,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Programming & Tech</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/ai-services.png"
               alt=""
@@ -350,7 +408,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">AI & services</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/business.png"
               alt=""
@@ -358,7 +421,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Business</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/consulting.png"
               alt=""
@@ -366,7 +434,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Conssulting</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/digital-marketing.png"
               alt=""
@@ -374,7 +447,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Digital & Marketing</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/graphics-design.png"
               alt=""
@@ -382,7 +460,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Graphic & Design</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/music-audio.png"
               alt=""
@@ -390,7 +473,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Music & Audio</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/video-animation.png"
               alt=""
@@ -398,7 +486,12 @@ export const HomeTemplate = () => {
             />
             <p className="mt-2 ">Video & Animatioin</p>
           </div>
-          <div className="w-[160px] flex flex-col items-center" onClick={()=>{navigate(PATH.DSCV)}}>
+          <div
+            className="w-[160px] flex flex-col items-center cursor-pointer"
+            onClick={() => {
+              navigate(PATH.DSCV);
+            }}
+          >
             <img
               src="/image/writing-translation.png"
               alt=""
@@ -408,6 +501,23 @@ export const HomeTemplate = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={isOpenModal}
+        onCancel={() => {
+          setIsOpenModal(false);
+        }}
+        width={1000}
+      >
+        <ReactPlayer
+          url={url}
+          width={"100%"}
+          height={500}
+          controls={true}
+          playing={isOpenModal}
+          muted={!isOpenModal}
+        />
+      </Modal>
     </div>
   );
 };

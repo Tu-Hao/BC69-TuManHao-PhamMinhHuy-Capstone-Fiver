@@ -56,7 +56,7 @@ export const Header = () => {
   return (
     <div className="sticky top-0 bg-white z-50">
       <div className="flex justify-around items-center h-[70px]">
-        <div className="text-[30px] font-[700] flex gap-5 items-center">
+        <div className="text-[30px] font-[700] flex gap-5 items-center cursor-pointer">
           <p onClick={()=>{
             navigate('')
           }}>
