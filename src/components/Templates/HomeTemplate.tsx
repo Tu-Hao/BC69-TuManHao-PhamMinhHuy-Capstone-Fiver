@@ -45,7 +45,9 @@ export const HomeTemplate = () => {
                 )}
               >
                 {resultSearch?.map((item) => (
-                  <div className=" cursor-pointer " >
+                  <div className=" cursor-pointer " onClick={()=>{
+                    navigate(PATH.Detail, { state: item.id });
+                  }} >
                     <div className="flex gap-2 text-[15px] items-center my-3 hover:bg-slate-200">
                       <img
                         src={item.congViec.hinhAnh}

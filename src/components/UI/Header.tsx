@@ -1,5 +1,4 @@
 import {
-  Button,
   Carousel,
   Dropdown,
   Input,
@@ -50,8 +49,7 @@ export const Header = () => {
   useEffect(() => {}, [check]);
   const { setData } = useData();
   const [valueSearch, setValueSearch] = useState<string>("");
-  const { data: search } =
-    valueSearch !== "" ? useSearchByName(valueSearch) : { data: undefined };
+  const { data: search } = useSearchByName(valueSearch);
   const { data: menuCV } = useGetMenuCV();
   const navigate = useNavigate();
 
@@ -82,7 +80,9 @@ export const Header = () => {
                 )}
               >
                 {search?.map((item) => (
-                  <div className="p-3" key={item.id}>
+                  <div className="p-3" key={item.id} onClick={()=>{
+                    navigate(PATH.Detail, { state: item.id });
+                  }}>
                     <div className="flex gap-2 text-[15px] items-center font-[400]">
                       <img
                         src={item.congViec.hinhAnh}
