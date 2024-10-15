@@ -1,5 +1,4 @@
 import {
-  Button,
   Carousel,
   Dropdown,
   Input,
@@ -50,15 +49,14 @@ export const Header = () => {
   useEffect(() => {}, [check]);
   const { setData } = useData();
   const [valueSearch, setValueSearch] = useState<string>("");
-  const { data: search } =
-    valueSearch !== "" ? useSearchByName(valueSearch) : { data: undefined };
+  const { data: search } = useSearchByName(valueSearch);
   const { data: menuCV } = useGetMenuCV();
   const navigate = useNavigate();
 
   return (
     <div className="sticky top-0 bg-white z-50">
       <div className="flex justify-around items-center h-[70px]">
-        <div className="text-[30px] font-[700] flex gap-5 items-center">
+        <div className="text-[30px] font-[700] flex gap-5 items-center cursor-pointer">
           <p onClick={()=>{
             navigate('')
           }}>
@@ -82,7 +80,9 @@ export const Header = () => {
                 )}
               >
                 {search?.map((item) => (
-                  <div className="p-3" key={item.id}>
+                  <div className="p-3" key={item.id} onClick={()=>{
+                    navigate(PATH.Detail, { state: item.id });
+                  }}>
                     <div className="flex gap-2 text-[15px] items-center font-[400]">
                       <img
                         src={item.congViec.hinhAnh}
@@ -196,7 +196,7 @@ export const Header = () => {
             return (
               <Dropdown
                 menu={{ items }}
-                className="mx-3 "
+                className="mx-3 cursor-pointer"
                 key={item.id}
                 trigger={["click"]}
               >

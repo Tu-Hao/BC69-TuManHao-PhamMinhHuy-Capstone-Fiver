@@ -96,7 +96,6 @@ const Header: React.FC = () => {
             )}
           </div>
           <div className="relative">
-            {/* Explore Button */}
             <button
               onClick={toggleExplore}
               className="hover:text-lime-500 flex items-center focus:outline-none"
@@ -109,7 +108,6 @@ const Header: React.FC = () => {
                 }`}
               />
             </button>
-            {/* Fiverr Pro Dropdown */}
             {isExploreOpen && (
               <div className="absolute left-0 mt-2 w-96 bg-white rounded-md shadow-lg z-50">
                 <div className="flex hover:bg-gray-100 rounded-md border-solid border-[1px] border-opacity-90 border-gray-200 font-bold px-1 py-1 mx-3 my-3">
@@ -211,10 +209,49 @@ const Header: React.FC = () => {
           </a>
         </nav>
 
-        {/* Sign In and Join buttons for desktop */}
         <div className="hidden md:flex space-x-4">
           <LoginModal />
           <RegisterModal />
+        </div>
+
+        <div className="md:hidden flex items-center relative">
+          <button onClick={toggleDropdown}>
+            <FontAwesomeIcon icon={faChevronDown} className="text-gray-700" />
+          </button>
+
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
+              <a
+                href="#"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Fiverr Pro
+              </a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Explore
+              </a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                <FontAwesomeIcon icon={faGlobe} className="mr-1" />
+                English
+              </a>
+              <a
+                href="https://www.fiverr.com/start_selling?source=top_nav"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Become a Seller
+              </a>
+              <div className="border-t mt-2">
+                <LoginModal />
+                <RegisterModal />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>
