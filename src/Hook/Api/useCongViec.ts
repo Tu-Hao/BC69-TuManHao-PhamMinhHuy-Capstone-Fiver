@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { congViec } from "../../services/congViecService"
-import { SearchCV } from "../../@types/CongViec"
-import { useEffect, useState } from "react"
+
 
 //home
 export const useGetTypeCV = () => {

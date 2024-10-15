@@ -177,7 +177,7 @@ const AdminUserManagement: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (text: string, user: User) => (
+      render: ( user: User) => (
         <div>
           <Button onClick={() => handleEdit(user)}>Edit</Button>
           <Button danger onClick={() => handleDelete(user.id)}>

@@ -1,5 +1,5 @@
 // // src/components/LoginModal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState,} from "react";
 import { Modal, Button, Input, message, Dropdown } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
