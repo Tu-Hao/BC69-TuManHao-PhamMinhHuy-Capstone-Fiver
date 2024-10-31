@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Modal, Input, Radio, Button, message } from "antd";
+import { Modal, Input, Radio, Button, message, Form } from "antd";
 import axiosInstance from "../constants/api";
+import { validateEmail, validatePhone, validateRequired } from "../Validation/registerValidation";
 
-// Define the props for visibility control
 interface RegisterAdminModalProps {
   visible: boolean;
-  onCancel: () => void; // Function to close the modal
+  onCancel: () => void;
 }
 
 const RegisterAdminModal: React.FC<RegisterAdminModalProps> = ({ visible, onCancel }) => {
@@ -15,87 +15,92 @@ const RegisterAdminModal: React.FC<RegisterAdminModalProps> = ({ visible, onCanc
     password: "",
     phone: "",
     birthday: "",
-    gender: "true", // Default gender to true (Male)
-    role: "USER", // Default to user
+    gender: "true",
+    role: "USER",
   });
 
   const handleSubmit = () => {
+    if (
+      !validateRequired(formData.name, "Name") ||
+      !validateEmail(formData.email) ||
+      !validatePhone(formData.phone)
+    ) return;
+
     axiosInstance
       .post("/api/users", formData)
       .then(() => {
         message.success("User added successfully");
-        onCancel(); // Close the modal after successful submission
+        onCancel();
       })
-      .catch(() => {
-        message.error("Error adding user");
-      });
+      .catch(() => message.error("Error adding user"));
+  };
+
+  const handleInputChange = (key: string, value: string) => {
+    setFormData({ ...formData, [key]: value });
   };
 
   return (
     <Modal
       title="Add New User"
       visible={visible}
-      onCancel={onCancel} // Allow the modal to close
+      onCancel={onCancel}
       footer={[
-        <Button key="cancel" onClick={onCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>
-          Add
-        </Button>,
+        <Button key="cancel" onClick={onCancel}>Cancel</Button>,
+        <Button key="submit" type="primary" onClick={handleSubmit}>Add</Button>,
       ]}
+      centered
+      bodyStyle={{ padding: "20px" }}
     >
-      <Input
-        placeholder="Name"
-        value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        style={{ marginBottom: 10 }}
-      />
-      <Input
-        placeholder="Email"
-        value={formData.email}
-        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        style={{ marginBottom: 10 }}
-      />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={formData.password}
-        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-        style={{ marginBottom: 10 }}
-      />
-      <Input
-        placeholder="Phone"
-        value={formData.phone}
-        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-        style={{ marginBottom: 10 }}
-      />
-            {/* Gender Radio Group */}
-            <Radio.Group
-        value={formData.gender}
-        onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-        style={{ marginBottom: 10 }}
-      >
-        <Radio value="true">Male</Radio>
-        <Radio value="false">Female</Radio>
-      </Radio.Group>
-      <Input
-        placeholder="Birthday"
-        value={formData.birthday}
-        onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
-        style={{ marginBottom: 10 }}
-      />
-
-
-
-      {/* Role Radio Group */}
-      <Radio.Group
-        value={formData.role}
-        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-      >
-        <Radio value="USER">User</Radio>
-        <Radio value="ADMIN">Admin</Radio>
-      </Radio.Group>
+      <Form layout="vertical">
+        <Form.Item label="Name" required>
+          <Input
+            value={formData.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Email" required>
+          <Input
+            value={formData.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Password" required>
+          <Input.Password
+            value={formData.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Phone" required>
+          <Input
+            value={formData.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Gender" required>
+          <Radio.Group
+            value={formData.gender}
+            onChange={(e) => handleInputChange("gender", e.target.value)}
+          >
+            <Radio value="true">Male</Radio>
+            <Radio value="false">Female</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item label="Birthday">
+          <Input
+            value={formData.birthday}
+            onChange={(e) => handleInputChange("birthday", e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Role" required>
+          <Radio.Group
+            value={formData.role}
+            onChange={(e) => handleInputChange("role", e.target.value)}
+          >
+            <Radio value="USER">User</Radio>
+            <Radio value="ADMIN">Admin</Radio>
+          </Radio.Group>
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };

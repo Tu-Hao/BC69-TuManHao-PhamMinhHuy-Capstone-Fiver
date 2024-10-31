@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Input, Pagination, message, Radio } from "antd";
 import axiosInstance from "../constants/api";
 import RegisterAdminModal from "../components/RegisterAdminModal";
+import { validateUserForm } from "../Validation/userValidations";
 
 // Define User interface
 interface User {
@@ -99,23 +100,37 @@ const AdminUserManagement: React.FC = () => {
     setEditUser(null); // Clear the selected user
   };
 
-  // Handle saving the user edits
-  const handleSaveEdit = () => {
-    if (editUser) {
-      axiosInstance
-        .put(`/api/users/${editUser.id}`, editUser, {
-          params: { id: editUser.id }, // Pass the user id as a query parameter
-        })
-        .then(() => {
-          message.success("User updated successfully");
-          fetchUsers(page, searchKeyword); // Refresh the table
-          setIsEditModalVisible(false); // Close the modal
-        })
-        .catch(() => {
-          message.error("Error updating user");
-        });
+// Handle saving the user edits
+const handleSaveEdit = () => {
+  if (editUser) {
+    // Run validation on editUser
+    const validationErrors = validateUserForm(editUser);
+
+    // Display specific error messages for each field if there are errors
+    if (Object.keys(validationErrors).length > 0) {
+      // Loop through each field with an error and show the message
+      for (const [field, errorMessage] of Object.entries(validationErrors)) {
+        message.error(`${field.charAt(0).toUpperCase() + field.slice(1)}: ${errorMessage}`);
+      }
+      return; // Exit the function if there are validation errors
     }
-  };
+
+    // Proceed with the API call if validation passes
+    axiosInstance
+      .put(`/api/users/${editUser.id}`, editUser, {
+        params: { id: editUser.id }, // Pass the user id as a query parameter
+      })
+      .then(() => {
+        message.success("User updated successfully");
+        fetchUsers(page, searchKeyword); // Refresh the table
+        setIsEditModalVisible(false); // Close the modal
+      })
+      .catch(() => {
+        message.error("Error updating user");
+      });
+  }
+};
+
 
   // Handle search input and press enter
   const handleSearch = (value: string) => {
@@ -197,7 +212,7 @@ const AdminUserManagement: React.FC = () => {
 
       {/* Search Input */}
       <Input.Search
-        placeholder="Search users"
+        placeholder="Search users by name"
         enterButton="Search"
         onSearch={handleSearch}
         style={{ marginBottom: 20, marginTop: 10 }}
@@ -224,87 +239,70 @@ const AdminUserManagement: React.FC = () => {
 
       {/* Edit User Modal */}
       <Modal
-        title={`Edit ${editUser?.name}`}
-        visible={isEditModalVisible}
-        onCancel={handleEditModalCancel}
-        onOk={handleSaveEdit}
-      >
-        <Input
-          placeholder="Name"
-          value={editUser?.name}
-          onChange={(e) =>
-            setEditUser((prev) => ({ ...prev!, name: e.target.value }))
-          }
-        />
-        <Input
-          placeholder="Email"
-          value={editUser?.email}
-          onChange={(e) =>
-            setEditUser((prev) => ({ ...prev!, email: e.target.value }))
-          }
-        />
-        <Input
-          placeholder="Phone"
-          value={editUser?.phone}
-          onChange={(e) =>
-            setEditUser((prev) => ({ ...prev!, phone: e.target.value }))
-          }
-        />
-        <Input
-          placeholder="Birthday"
-          value={editUser?.birthday}
-          onChange={(e) =>
-            setEditUser((prev) => ({ ...prev!, birthday: e.target.value }))
-          }
-        />
-
-        {/* Gender Radio Group */}
-        <Radio.Group
-          onChange={(e) =>
-            setEditUser((prev) => ({
-              ...prev!,
-              gender: e.target.value === "true",
-            }))
-          }
-          value={editUser?.gender ? "true" : "false"}
-        >
-          <Radio value="true">Male</Radio>
-          <Radio value="false">Female</Radio>
-        </Radio.Group>
-        {/* Skill Input */}
-        <Input
-          placeholder="Skills"
-          value={editUser?.skill?.join(", ")}
-          onChange={(e) =>
-            setEditUser((prev) => ({
-              ...prev!,
-              skill: e.target.value.split(", "),
-            }))
-          }
-        />
-
-        {/* Certification Input */}
-        <Input
-          placeholder="Certifications"
-          value={editUser?.certification?.join(", ")}
-          onChange={(e) =>
-            setEditUser((prev) => ({
-              ...prev!,
-              certification: e.target.value.split(", "),
-            }))
-          }
-        />
-        {/* Role Radio Group */}
-        <Radio.Group
-          onChange={(e) =>
-            setEditUser((prev) => ({ ...prev!, role: e.target.value }))
-          }
-          value={editUser?.role}
-        >
-          <Radio value="USER">USER</Radio>
-          <Radio value="ADMIN">ADMIN</Radio>
-        </Radio.Group>
-      </Modal>
+  title={`Edit ${editUser?.name}`}
+  visible={isEditModalVisible}
+  onCancel={handleEditModalCancel}
+  onOk={handleSaveEdit}
+>
+  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <label>Name</label>
+    <Input
+      placeholder="Name"
+      value={editUser?.name}
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, name: e.target.value }))}
+    />
+    <label>Email</label>
+    <Input
+      placeholder="Email"
+      value={editUser?.email}
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, email: e.target.value }))}
+    />
+    <label>Phone</label>
+    <Input
+      placeholder="Phone"
+      value={editUser?.phone}
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, phone: e.target.value }))}
+    />
+    <label>Birthday</label>
+    <Input
+      placeholder="Birthday"
+      value={editUser?.birthday}
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, birthday: e.target.value }))}
+    />
+    <label>Gender</label>
+    <Radio.Group
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, gender: e.target.value === "true" }))}
+      value={editUser?.gender ? "true" : "false"}
+    >
+      <Radio value="true">Male</Radio>
+      <Radio value="false">Female</Radio>
+    </Radio.Group>
+    <label>Skills</label>
+    <Input
+      placeholder="Skills"
+      value={editUser?.skill?.join(", ")}
+      onChange={(e) =>
+        setEditUser((prev) => ({ ...prev!, skill: e.target.value.split(", ") }))
+      }
+    />
+    <label>Certifications</label>
+    <Input
+      placeholder="Certifications"
+      value={editUser?.certification?.join(", ")}
+      onChange={(e) =>
+        setEditUser((prev) => ({ ...prev!, certification: e.target.value.split(", ") }))
+      }
+    />
+    <label>Role</label>
+    <Radio.Group
+      onChange={(e) => setEditUser((prev) => ({ ...prev!, role: e.target.value }))}
+      value={editUser?.role}
+    >
+      <Radio value="USER">USER</Radio>
+      <Radio value="ADMIN">ADMIN</Radio>
+    </Radio.Group>
+  </div>
+</Modal>
     </div>
   );
 };
