@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, message, Radio, } from "antd";
-import { UploadOutlined } from "@ant-design/icons"; // Import icon for upload button
+import { Input, Button, message, Radio, Modal, } from "antd";
 import axiosInstance from "../constants/api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { updateUserAvatar } from "../redux/authSlice";
 
 // Define TypeScript interfaces based on API response
 interface Content {
@@ -21,13 +21,40 @@ interface Content {
   bookingJob: any[];
 }
 
+// Define the Skill interface for skill suggestions
+// interface Skill {
+//   id: number;
+//   tenSkill: string;
+// }
+
+// interface SkillResponse {
+//   statusCode: number;
+//   content: Skill[];
+// }
+
 const Profile: React.FC = () => {
-  const [userData, setUserData] = useState<Content | null>(null); // Store user data
+  const [userData, setUserData] = useState<Content>({
+    id: 0,
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    birthday: "",
+    avatar: "",
+    gender: true,
+    role: "",
+    skill: [],
+    certification: [],
+    bookingJob: [],
+  });
   const [isEditing, setIsEditing] = useState(false); // State for enabling/disabling editing
   const [fileList, setFileList] = useState<File | null>(null); // Store selected file
   const [fileName, setFileName] = useState<string>(""); // Store file name for display
   const userId = useSelector((state: RootState) => state.auth.user?.id); // Get user ID from Redux store
   const userToken = useSelector((state: RootState) => state.auth.token); // Get user token from Redux store
+  const [previewImage, setPreviewImage] = useState<string>("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const dispatch = useDispatch();
 
   // Fetch user profile data
   useEffect(() => {
@@ -61,15 +88,20 @@ const Profile: React.FC = () => {
     }));
   };
 
-  // Handle skill and certification changes
-  const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData!,
-      skill: value.split(",").map((item) => item.trim()), // Convert comma-separated string back to array
-    }));
-  };
+  
 
+ // Handle skill changes
+ const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { value } = e.target;
+  setUserData((prevData) => ({
+    ...prevData!,
+    skill: value.split(",").map((item) => item.trim()), // Convert comma-separated string back to array
+  }));
+};
+
+
+
+  //  certification changes
   const handleCertificationChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -100,9 +132,9 @@ const Profile: React.FC = () => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.size <= 25 * 1024 * 1024) {
-        // Check if file size is under 25MB
         setFileList(selectedFile);
-        setFileName(selectedFile.name);
+        setPreviewImage(URL.createObjectURL(selectedFile)); // Create preview URL
+        setIsModalVisible(true); // Show confirmation modal
       } else {
         message.error("File size must not exceed 25MB");
       }
@@ -124,6 +156,23 @@ const Profile: React.FC = () => {
         })
         .then(() => {
           message.success("Avatar uploaded successfully");
+          
+          // Refetch profile data to update avatar
+          axiosInstance
+            .get(`/api/users/${userId}`)
+            .then((response) => {
+              const newAvatar = response.data.content.avatar;
+              dispatch(updateUserAvatar(newAvatar)); // Update avatar in Redux
+              setUserData(response.data.content); // Update user data with new avatar
+              setIsModalVisible(false); // Close modal after upload
+            })
+            .catch(() => {
+              message.error("Error refreshing profile data");
+            });
+          
+          // Clear selected file and file name
+          setFileList(null);
+          setFileName("");
         })
         .catch(() => {
           message.error("Failed to upload avatar");
@@ -133,9 +182,8 @@ const Profile: React.FC = () => {
     }
   };
 
-
   if (!userData) {
-    return <div>Error occurred! Please re-sign in.</div>; // Display loading state while fetching data
+    return <div>Error occurred! Please re-sign in.</div>; 
   }
 
   return (
@@ -248,28 +296,9 @@ const Profile: React.FC = () => {
             <label className="block text-sm font-medium">ID:</label>
             <Input value={userData.id} disabled />
           </div>
-
-          {/* Upload Avatar functionality */}
-          <div className="mt-4">
-          <label className="block text-sm font-medium">Avatar:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={!isEditing}
-            />
-            {fileName && <p>Selected File: {fileName}</p>}
-            <Button
-              icon={<UploadOutlined />}
-              onClick={handleUpload}
-              disabled={!fileList || !isEditing}
-            >
-              Upload Avatar
-            </Button>
-          </div>
-
-          {/* Edit and Save buttons */}
-          <div className="space-x-2">
+          
+                    {/* Edit and Save buttons */}
+                    <div className="space-x-2">
             {!isEditing ? (
               <Button onClick={() => setIsEditing(true)}>Edit</Button>
             ) : (
@@ -280,7 +309,27 @@ const Profile: React.FC = () => {
             )}
           </div>
 
-          
+          {/* Upload Avatar functionality */}
+          <div className="mt-4">
+            <label className="block text-sm font-medium">Avatar:</label>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+            {fileName && <p className="text-sm text-gray-500">Selected file: {fileName}</p>}
+          </div>
+
+          <Modal
+            title="Bạn muốn sử dụng hình này làm ảnh đại diện?"
+            open={isModalVisible}
+            onOk={handleUpload}
+            onCancel={() => setIsModalVisible(false)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <img
+              src={previewImage}
+              alt="Selected Avatar"
+              className="rounded-full h-32 w-32 object-cover mx-auto"
+            />
+          </Modal>
         </div>
       </div>
     </div>

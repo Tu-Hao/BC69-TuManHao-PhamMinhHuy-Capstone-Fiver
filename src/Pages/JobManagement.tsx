@@ -49,7 +49,7 @@ const JobManagement: React.FC = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Edit modal state
   const [form] = Form.useForm();
   const userToken = useSelector((state: RootState) => state.auth.token); // Token from Redux
-  const [fileList, setFileList] = useState<File | null>(null); // For file upload
+  const [fileList, setFileList] = useState<Record<number, File | null>>({}); // Track file selection for each job
   const [editJobData, setEditJobData] = useState<Datum | null>(null); // Store job data for editing
 
   // Function to fetch jobs based on page number and keyword
@@ -91,84 +91,44 @@ const JobManagement: React.FC = () => {
   // Handle job creation
   const handleCreate = async (values: Datum) => {
     try {
-      const response = await axiosInstance.post("/api/cong-viec", values, {
+      await axiosInstance.post("/api/cong-viec", values, {
         headers: {
           token: `${userToken}`, // Pass user token for authentication
         },
       });
-      const { id } = response.data; // Extract id from the response
       message.success("Job created successfully!");
-
-      // If the user has selected a file, proceed with uploading the image
-      if (fileList) {
-        const formData = new FormData();
-        formData.append("formFile", fileList);
-
-        // Make another POST request to upload the image for the created job
-        await axiosInstance.post(
-          `/api/cong-viec/upload-hinh-cong-viec/${id}`,
-          formData,
-          {
-            headers: {
-              token: `${userToken}`, // Pass user token for authentication
-            },
-          }
-        );
-        message.success("Image uploaded successfully!");
-      }
 
       setIsModalVisible(false);
       form.resetFields();
-      setFileList(null); // Reset file upload
       fetchJobs(currentPage, keyword); // Reload the table after creation
     } catch (error) {
-      message.error("Failed to create job or upload image");
+      message.error("Failed to create job");
     }
   };
 
-// Handle job update (edit)
-const handleUpdate = async () => {
-  if (editJobData) {
-    try {
-      // Update the job details first
-      await axiosInstance.put(
-        `/api/cong-viec/${editJobData.id}`,
-        editJobData,
-        {
-          headers: {
-            token: `${userToken}`, // Pass user token for authentication
-          },
-        }
-      );
-      message.success("Job updated successfully");
-
-      // If a file is selected, upload the new image
-      if (fileList) {
-        const formData = new FormData();
-        formData.append("formFile", fileList);
-
-        // Upload the image
-        await axiosInstance.post(
-          `/api/cong-viec/upload-hinh-cong-viec/${editJobData.id}`,
-          formData,
+  // Handle job update (edit)
+  const handleUpdate = async () => {
+    if (editJobData) {
+      try {
+        // Update the job details
+        await axiosInstance.put(
+          `/api/cong-viec/${editJobData.id}`,
+          editJobData,
           {
             headers: {
               token: `${userToken}`, // Pass user token for authentication
             },
           }
         );
-        message.success("Image uploaded successfully");
+        message.success("Job updated successfully");
+
+        setIsEditModalVisible(false); // Close the modal after update
+        fetchJobs(currentPage, keyword); // Reload the jobs list
+      } catch (error) {
+        message.error("Failed to update job");
       }
-
-      setIsEditModalVisible(false); // Close the modal after update
-      setFileList(null); // Reset file upload
-      fetchJobs(currentPage, keyword); // Reload the jobs list
-    } catch (error) {
-      message.error("Failed to update job or upload image");
     }
-  }
-};
-
+  };
 
   // Handle edit job
   const handleEdit = (job: Datum) => {
@@ -211,10 +171,57 @@ const handleUpdate = async () => {
   }, [currentPage, keyword]);
 
   // Handle file selection
-  const handleFileChange = (info: any) => {
-    if (info.file.status === "done" || info.file.status === "uploading") {
-      const file = info.file.originFileObj;
-      setFileList(file); // Set the selected file
+  const handleFileChange = (jobId: number, info: any) => {
+    const file = info.file.originFileObj as File;
+
+    if (file && file.size > 5 * 1024 * 1024) {
+      message.error("File size must be smaller than 5MB");
+      return;
+    }
+
+    setFileList((prev) => ({
+      ...prev,
+      [jobId]: file, // Store the selected file for the specific job
+    }));
+
+    Modal.confirm({
+      title: "Confirm Upload",
+      content: `Are you sure you want to upload this image for Job ID: ${jobId}?`,
+      okText: "Yes, upload it",
+      cancelText: "Cancel",
+      onOk: () => {
+        uploadImage(jobId);
+      },
+    });
+  };
+
+  // Function to upload the image
+  const uploadImage = async (jobId: number) => {
+    const file = fileList[jobId];
+    if (!file) {
+      message.error("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("formFile", file);
+
+    try {
+      await axiosInstance.post(
+        `/api/cong-viec/upload-hinh-cong-viec/${jobId}`,
+        formData,
+        {
+          headers: {
+            token: `${userToken}`, // Pass user token for authentication
+          },
+        }
+      );
+      message.success(`Image uploaded successfully for Job ID: ${jobId}`);
+    } catch (error: any) {
+      const { statusCode, message: errorMessage } = error.response?.data || {};
+      message.error(
+        `Failed to upload image for Job ID: ${jobId}. Error: ${statusCode} - ${errorMessage}`
+      );
     }
   };
   // API call to upload the image for the edited job
@@ -295,12 +302,21 @@ const handleUpdate = async () => {
       title: "Image",
       dataIndex: "hinhAnh",
       key: "hinhAnh",
-      render: (image: string) => (
-        <img
-          src={image || "/img/fiverr-brand-default.jpg"}
-          alt="Job"
-          className="w-20 h-20 object-cover"
-        />
+      render: (image: string, record: Datum) => (
+        <div className="flex flex-col text-center">
+          <img
+            src={image || "/img/fiverr-brand-default.jpg"}
+            alt="Job"
+            className="h-40 w-60 bg-cover mb-3"
+          />
+          <Upload
+            maxCount={1}
+            beforeUpload={() => false} // Prevent automatic upload
+            onChange={(info) => handleFileChange(record.id, info)}
+          >
+            <Button icon={<UploadOutlined />}>Choose Image</Button>
+          </Upload>
+        </div>
       ),
     },
     {
@@ -394,14 +410,6 @@ const handleUpdate = async () => {
           <Form.Item label="Image URL" name="hinhAnh">
             <Input />
           </Form.Item>
-          <Form.Item label="Upload Job Image" valuePropName="file">
-            <Upload
-              beforeUpload={() => false} // Prevent automatic upload
-              onChange={handleFileChange}
-            >
-              <Button icon={<UploadOutlined />}>Select File</Button>
-            </Upload>
-          </Form.Item>
         </Form>
       </Modal>
 
@@ -479,7 +487,8 @@ const handleUpdate = async () => {
                     moTaNgan: e.target.value,
                   }))
                 }
-                rows={3} placeholder="Enter short description"
+                rows={3}
+                placeholder="Enter short description"
               />
             </Form.Item>
             <Form.Item label="Description">
@@ -491,7 +500,8 @@ const handleUpdate = async () => {
                     moTa: e.target.value,
                   }))
                 }
-                rows={5} placeholder="Enter full description"
+                rows={5}
+                placeholder="Enter full description"
               />
             </Form.Item>
             <Form.Item label="Job Type Detail Code">
@@ -518,26 +528,6 @@ const handleUpdate = async () => {
                 }
               />
             </Form.Item>
-
-            <Form.Item label="Or Upload Image">
-  <Upload
-    maxCount={1}
-    beforeUpload={() => false} // Prevent auto-upload
-    onChange={(info) => {
-      const file = info.file.originFileObj as File | undefined; // Type assertion
-      if (file) {
-        setFileList(file); // Only set if file is valid
-        // call my api post here
-      } else {
-        setFileList(null); // Handle the case where no file is selected
-      }
-    }}
-  >
-    <Button icon={<UploadOutlined />}>Select Image</Button>
-  </Upload>
-</Form.Item>
-
-
           </Form>
         )}
       </Modal>
@@ -546,4 +536,3 @@ const handleUpdate = async () => {
 };
 
 export default JobManagement;
-

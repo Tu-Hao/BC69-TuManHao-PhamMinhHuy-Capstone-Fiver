@@ -1,7 +1,7 @@
 // // src/components/LoginModal.tsx
-import React, { useState,} from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, message, Dropdown } from "antd";
-import axios from "axios";
+import axiosInstance from "../constants/api";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../redux/authSlice";
 import { RootState } from "../redux/store";
@@ -24,22 +24,21 @@ const LoginModal: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Refresh avatar in LoginModal when updated in the profile
+    if (user) (user.avatar); // set other user data as needed
+  }, [user]);
+
   const handleLogin = async () => {
     try {
       // Validate form using Zod
       loginSchema.parse({ email, password });
 
       // Call the login API
-      const response = await axios.post(
-        "https://fiverrnew.cybersoft.edu.vn/api/auth/signin",
-        { email, password },
-        {
-          headers: {
-            TokenCyberSoft:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g",
-          },
-        }
-      );
+      const response = await axiosInstance.post("/api/auth/signin", {
+        email,
+        password,
+      });
 
       const { user, token } = response.data.content;
 
@@ -66,6 +65,7 @@ const LoginModal: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     message.info("You have logged out !");
+    navigate("/"); // Redirect to homepage
   };
 
   // Define the menu items
