@@ -52,6 +52,7 @@ const JobManagement: React.FC = () => {
   const [fileList, setFileList] = useState<Record<number, File | null>>({}); // Track file selection for each job
   const [editJobData, setEditJobData] = useState<Datum | null>(null); // Store job data for editing
 
+
   // Function to fetch jobs based on page number and keyword
   const fetchJobs = (pageNumber: number, keyword: string) => {
     setLoading(true);
@@ -170,88 +171,72 @@ const JobManagement: React.FC = () => {
     fetchJobs(currentPage, keyword);
   }, [currentPage, keyword]);
 
-  // Handle file selection
-  const handleFileChange = (jobId: number, info: any) => {
-    const file = info.file.originFileObj as File;
+// Handle file selection and confirmation modal
+const handleFileChange = (jobId: number, info: any) => {
+  const file = info.file.originFileObj || info.file;
 
-    if (file && file.size > 5 * 1024 * 1024) {
-      message.error("File size must be smaller than 5MB");
-      return;
-    }
+  if (file && file.size > 5 * 1024 * 1024) {
+    message.error("File size must be smaller than 5MB");
+    return;
+  }
 
-    setFileList((prev) => ({
-      ...prev,
-      [jobId]: file, // Store the selected file for the specific job
-    }));
+  setFileList((prev) => ({
+    ...prev,
+    [jobId]: file, // Store selected file for the specific job
+  }));
 
-    Modal.confirm({
-      title: "Confirm Upload",
-      content: `Are you sure you want to upload this image for Job ID: ${jobId}?`,
-      okText: "Yes, upload it",
-      cancelText: "Cancel",
-      onOk: () => {
-        uploadImage(jobId);
-      },
-    });
-  };
+  Modal.confirm({
+    title: "Confirm Upload",
+    content: `Are you sure you want to upload this image for Job ID: ${jobId}?`,
+    okText: "Yes, upload it",
+    cancelText: "Cancel",
+    onOk: () => {
+      uploadImage(jobId);
+    },
+  });
+};
 
-  // Function to upload the image
-  const uploadImage = async (jobId: number) => {
-    const file = fileList[jobId];
-    if (!file) {
-      message.error("No file selected");
-      return;
-    }
+// Function to upload the image and directly update the table with the new image URL
+const uploadImage = async (jobId: number) => {
+  const file = fileList[jobId];
+  if (!file) {
+    message.error("Please try uploading again.");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("formFile", file);
+  const formData = new FormData();
+  formData.append("formFile", file);
 
-    try {
-      await axiosInstance.post(
-        `/api/cong-viec/upload-hinh-cong-viec/${jobId}`,
-        formData,
-        {
-          headers: {
-            token: `${userToken}`, // Pass user token for authentication
-          },
-        }
-      );
-      message.success(`Image uploaded successfully for Job ID: ${jobId}`);
-    } catch (error: any) {
-      const { statusCode, message: errorMessage } = error.response?.data || {};
-      message.error(
-        `Failed to upload image for Job ID: ${jobId}. Error: ${statusCode} - ${errorMessage}`
-      );
-    }
-  };
-  // API call to upload the image for the edited job
-  // const handleEditImageUpload = async (formData: FormData, jobId: number) => {
-  //   try {
-  //     await axiosInstance.post(
-  //       `/api/cong-viec/upload-hinh-cong-viec/${jobId}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           token: `${userToken}`, // Pass user token for authentication
-  //         },
-  //       }
-  //     );
-  //     message.success("Image uploaded successfully!");
-  //   } catch (error) {
-  //     message.error("Failed to upload image");
-  //   }
-  // };
-  // Handle file selection for the edit modal
-  // const handleEditFileChange = (info: any, jobId: number) => {
-  //   if (info.file.status === "done" || info.file.status === "uploading") {
-  //     const file = info.file.originFileObj;
-  //     const formData = new FormData();
-  //     formData.append("formFile", file); // Append selected file
+  try {
+    const response = await axiosInstance.post(
+      `/api/cong-viec/upload-hinh-cong-viec/${jobId}`,
+      formData,
+      {
+        headers: {
+          token: `${userToken}`, // User token for authentication
+        },
+      }
+    );
+    message.success(`Image uploaded successfully for Job ID: ${jobId}, please reload page to take effect.`);
 
-  //     // Automatically call the API to upload the image
-  //     handleEditImageUpload(formData, jobId);
-  //   }
-  // };
+    // Clear file selection after successful upload
+    setFileList((prev) => ({ ...prev, [jobId]: null }));
+
+    // Update the jobs data with the new image URL
+    const newImage = response.data.hinhAnh;
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.id === jobId ? { ...job, hinhAnh: newImage } : job
+      )
+    );
+  } catch (error: any) {
+    const { statusCode, message: errorMessage } = error.response?.data || {};
+    message.error(
+      `Failed to upload image for Job ID: ${jobId}. Error: ${statusCode} - ${errorMessage}`
+    );
+  }
+};
+
 
   // Table columns definition
   const columns = [

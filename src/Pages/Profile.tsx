@@ -151,7 +151,6 @@ const Profile: React.FC = () => {
         .post("/api/users/upload-avatar", formData, {
           headers: {
             token: `${userToken}`, // Add user token for authentication
-            "Content-Type": "multipart/form-data", // Ensure it's multipart/form-data
           },
         })
         .then(() => {
