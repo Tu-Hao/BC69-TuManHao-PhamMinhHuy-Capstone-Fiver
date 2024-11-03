@@ -10,6 +10,7 @@ import {
   InputNumber,
   Rate,
   Upload,
+  Select,
 } from "antd";
 import axiosInstance from "../constants/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -39,19 +40,38 @@ interface Datum {
   saoCongViec: number; // Rating (display stars based on this value)
 }
 
+interface JobTypeCode {
+  id: number;
+  tenLoaiCongViec: string;
+}
+
 const JobManagement: React.FC = () => {
   const [jobs, setJobs] = useState<Datum[]>([]); // State to store the list of jobs
   const [totalRows, setTotalRows] = useState(0); // Total rows for pagination
   const [currentPage, setCurrentPage] = useState(1); // Current page number
-  const [keyword, setKeyword] = useState(""); // Search keyword
+  const [keyword] = useState(""); // Search keyword
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [loading, setLoading] = useState(false); // Loading state for API requests
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Edit modal state
   const [form] = Form.useForm();
   const userToken = useSelector((state: RootState) => state.auth.token); // Token from Redux
+  const userId = useSelector((state: RootState) => state.auth.user?.id); // get ID user from redux
   const [fileList, setFileList] = useState<Record<number, File | null>>({}); // Track file selection for each job
   const [editJobData, setEditJobData] = useState<Datum | null>(null); // Store job data for editing
+  const [jobTypes, setJobTypes] = useState<JobTypeCode[]>([]);
 
+    // Fetch job types
+    useEffect(() => {
+      axiosInstance
+        .get("/api/loai-cong-viec")
+        .then((response) => {
+          setJobTypes(response.data.content);
+        })
+        .catch(() => {
+          message.error("Failed to fetch job types");
+        });
+    }, []);
 
   // Function to fetch jobs based on page number and keyword
   const fetchJobs = (pageNumber: number, keyword: string) => {
@@ -75,6 +95,16 @@ const JobManagement: React.FC = () => {
         setLoading(false);
       });
   };
+   // Handle search input and press enter
+   const handleSearch = (value: string) => {
+    setSearchKeyword(value);
+    setCurrentPage(1); // Reset to page 1 when starting a new search
+    fetchJobs(1, value); // Fetch jobs with search keyword
+  };
+
+  useEffect(() => {
+    fetchJobs(currentPage, searchKeyword);
+  }, [currentPage, searchKeyword]);
 
   // Show modal for creating a new job
   const showModal = () => {
@@ -327,18 +357,20 @@ const uploadImage = async (jobId: number) => {
   ];
 
   return (
-    <div className="container">
-      <h1 className="text-2xl font-semibold mb-6">Job Management</h1>
+    <div className="container mt-4">
+      <h1 className="text-2xl font-semibold mb-6 text-center">Job Management</h1>
 
-      <div className="flex justify-between mb-4">
-        <Input.Search
-          placeholder="Search job by name"
-          onSearch={(value) => setKeyword(value)}
-          style={{ maxWidth: 400 }}
-        />
-        <Button onClick={showModal} className="bg-blue-500 text-white">
+      <div className="flex flex-col mb-4 ml-4">
+      <Button onClick={showModal} className="bg-blue-500 text-white w-min mb-3">
           Create Job
         </Button>
+        <Input.Search
+        placeholder="Search jobs by name"
+        enterButton="Search"
+        onSearch={handleSearch}
+          style={{ maxWidth: 400 }}
+        />
+
       </div>
 
       <Table
@@ -370,27 +402,33 @@ const uploadImage = async (jobId: number) => {
           </Button>,
         ]}
       >
-        <Form form={form} layout="vertical" onFinish={handleCreate}>
-          <Form.Item label="Job Title" name="tenCongViec">
+        <Form form={form} layout="vertical" onFinish={handleCreate} initialValues={{ nguoiTao: userId }}>
+          <Form.Item label="Job Title" name="tenCongViec" rules={[{ required: true, message: 'Your job need a title' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Price" name="giaTien">
+          <Form.Item label="Price" name="giaTien" rules={[{ required: true, message: 'Please input price!' }]}>
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item label="Creator" name="nguoiTao">
-            <InputNumber min={0} style={{ width: "100%" }} />
+          <Form.Item label="Creator ID" name="nguoiTao">
+            <InputNumber disabled={true} min={0} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item label="Rating" name="saoCongViec">
             <Rate allowClear />
           </Form.Item>
-          <Form.Item label="Short Description" name="moTaNgan">
+          <Form.Item label="Short Description" name="moTaNgan" rules={[{ required: true, message: 'Please input description!' }]}>
             <Input.TextArea rows={3} placeholder="Enter short description" />
           </Form.Item>
-          <Form.Item label="Description" name="moTa">
+          <Form.Item label="Description" name="moTa" rules={[{ required: true, message: 'Please input description!' }]}>
             <Input.TextArea rows={5} placeholder="Enter full description" />
           </Form.Item>
-          <Form.Item label="Job Type Detail Code" name="maChiTietLoaiCongViec">
-            <InputNumber min={0} style={{ width: "100%" }} />
+          <Form.Item label="Job Type Detail Code" name="maChiTietLoaiCongViec" rules={[{ required: true, message: 'Please select a job type!' }]}>
+            <Select>
+              {jobTypes.map((type) => (
+                <Select.Option key={type.id} value={type.id}>
+                  {type.tenLoaiCongViec}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item label="Image URL" name="hinhAnh">
             <Input />
@@ -413,8 +451,8 @@ const uploadImage = async (jobId: number) => {
         ]}
       >
         {editJobData && (
-          <Form layout="vertical">
-            <Form.Item label="Job Title">
+          <Form layout="vertical" initialValues={{ ...editJobData, nguoiTao: userId }}>
+            <Form.Item label="Job Title" rules={[{ required: true, message: 'Title is needed!' }]}>
               <Input
                 value={editJobData.tenCongViec}
                 onChange={(e) =>
@@ -425,7 +463,7 @@ const uploadImage = async (jobId: number) => {
                 }
               />
             </Form.Item>
-            <Form.Item label="Price">
+            <Form.Item label="Price" rules={[{ required: true, message: 'Please input description!' }]}>
               <InputNumber
                 value={editJobData.giaTien}
                 onChange={(value) =>
@@ -438,8 +476,8 @@ const uploadImage = async (jobId: number) => {
                 style={{ width: "100%" }}
               />
             </Form.Item>
-            <Form.Item label="Creator">
-              <InputNumber
+            <Form.Item label="Creator ID">
+              <InputNumber disabled={true} 
                 value={editJobData.nguoiTao}
                 onChange={(value) =>
                   setEditJobData((prev) => ({
@@ -463,7 +501,7 @@ const uploadImage = async (jobId: number) => {
                 allowClear
               />
             </Form.Item>
-            <Form.Item label="Short Description">
+            <Form.Item label="Short Description" rules={[{ required: true, message: 'Please input description!' }]}>
               <Input.TextArea
                 value={editJobData.moTaNgan}
                 onChange={(e) =>
@@ -476,7 +514,7 @@ const uploadImage = async (jobId: number) => {
                 placeholder="Enter short description"
               />
             </Form.Item>
-            <Form.Item label="Description">
+            <Form.Item label="Description" rules={[{ required: true, message: 'Please input description!' }]}>
               <Input.TextArea
                 value={editJobData.moTa}
                 onChange={(e) =>
@@ -489,18 +527,22 @@ const uploadImage = async (jobId: number) => {
                 placeholder="Enter full description"
               />
             </Form.Item>
-            <Form.Item label="Job Type Detail Code">
-              <InputNumber
+            <Form.Item label="Job Type Detail Code" rules={[{ required: true, message: 'Please input description!' }]}>
+              <Select
                 value={editJobData.maChiTietLoaiCongViec}
                 onChange={(value) =>
                   setEditJobData((prev) => ({
                     ...prev!,
-                    maChiTietLoaiCongViec: Number(value),
+                    maChiTietLoaiCongViec: value,
                   }))
                 }
-                min={0}
-                style={{ width: "100%" }}
-              />
+              >
+                {jobTypes.map((type) => (
+                  <Select.Option key={type.id} value={type.id}>
+                    {type.tenLoaiCongViec}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item label="Image URL">
               <Input

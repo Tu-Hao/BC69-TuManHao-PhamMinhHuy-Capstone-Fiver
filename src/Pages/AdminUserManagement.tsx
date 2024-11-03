@@ -205,7 +205,7 @@ const handleSaveEdit = () => {
 
   return (
     <div className="p-6 ">
-      <h1>User Management</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-center">User Management</h1>
       <Button onClick={showModal} className="bg-transparent text-lime-500 !border-lime-500 hover:!bg-lime-500 hover:!text-neutral-50">
         Add New User
       </Button>
