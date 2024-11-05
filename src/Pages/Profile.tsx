@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, message, Radio, Modal, } from "antd";
+import { Input, Button, message, Radio, Modal, Select, } from "antd";
 import axiosInstance from "../constants/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -21,16 +21,10 @@ interface Content {
   bookingJob: any[];
 }
 
-// Define the Skill interface for skill suggestions
-// interface Skill {
-//   id: number;
-//   tenSkill: string;
-// }
-
-// interface SkillResponse {
-//   statusCode: number;
-//   content: Skill[];
-// }
+interface Skill {
+  id: number;
+  tenSkill: string;
+}
 
 const Profile: React.FC = () => {
   const [userData, setUserData] = useState<Content>({
@@ -55,6 +49,7 @@ const Profile: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch = useDispatch();
+  const [skillsList, setSkillsList] = useState<Skill[]>([]); // State for skill options
 
   // Fetch user profile data
   useEffect(() => {
@@ -62,14 +57,25 @@ const Profile: React.FC = () => {
       axiosInstance
         .get(`/api/users/${userId}`)
         .then((response) => {
-          setUserData(response.data.content); // Populate user data from response
+          setUserData(response.data.content);
         })
         .catch(() => {
           message.error("Error fetching user profile");
         });
     }
+
+    // Fetch available skills
+    axiosInstance
+      .get("/api/skill")
+      .then((response) => {
+        setSkillsList(response.data.content); // Populate skills list
+      })
+      .catch(() => {
+        message.error("Error fetching skills");
+      });
   }, [userId]);
 
+  
   // Handle input change by updating user data state
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -88,18 +94,13 @@ const Profile: React.FC = () => {
     }));
   };
 
-  
-
  // Handle skill changes
- const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { value } = e.target;
+const handleSkillSelectChange = (selectedSkills: string[]) => {
   setUserData((prevData) => ({
-    ...prevData!,
-    skill: value.split(",").map((item) => item.trim()), // Convert comma-separated string back to array
+    ...prevData,
+    skill: selectedSkills, // Update skill array with selected skills
   }));
 };
-
-
 
   //  certification changes
   const handleCertificationChange = (
@@ -241,20 +242,24 @@ const Profile: React.FC = () => {
             />
           </div>
 
-          {/* Editable Skill field */}
-          <div>
-            <label className="block text-sm font-medium">Skills:</label>
-            <Input
-              name="skill"
-              value={
-                isEditing
-                  ? userData.skill?.join(", ")
-                  : userData.skill?.join(", ") || ""
-              } // Display comma-separated list
-              onChange={handleSkillChange} // Handle skill change
-              disabled={!isEditing}
-            />
-          </div>
+      {/* Editable Skills field with multi-select */}
+      <div>
+        <label className="block text-sm font-medium">Skills:</label>
+        <Select
+          mode="multiple"
+          placeholder="Select skills"
+          value={userData.skill}
+          onChange={handleSkillSelectChange}
+          disabled={!isEditing}
+          style={{ width: "100%" }}
+        >
+          {skillsList.map((skill) => (
+            <Select.Option key={skill.id} value={skill.tenSkill}>
+              {skill.tenSkill}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
 
           {/* Editable Certification field */}
           <div>
