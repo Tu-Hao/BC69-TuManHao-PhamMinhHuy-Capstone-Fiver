@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import cn from "classnames";
 import { Comment } from "../../@types/User";
+import axiosInstance from "../../constants/api";
 
 export const DetailCVTemplate = () => {
   const { state } = useLocation();
@@ -32,6 +33,37 @@ export const DetailCVTemplate = () => {
   const navigate = useNavigate();
   const User = useSelector((state: RootState) => state.auth.user);
   const [filter, setfilter] = useState<keyof Comment>("saoBinhLuan");
+  const userId = useSelector((state: RootState) => state.auth.user?.id); // Get user ID from Redux store
+  const userToken = useSelector((state: RootState) => state.auth.token); // Get user token from Redux store
+
+  const handleHireJob = async () => {
+    const today = dayjs().format("YYYY-MM-DD");
+    console.log("today: ", today);
+    if (!User) {
+      message.error("Please log in to hire a job.");
+      // open the login modal
+
+      return;
+    }
+    const payload = {
+      id: 0,
+      maCongViec: state,
+      maNguoiThue: userId,
+      ngayThue: today,
+      hoanThanh: false,
+    };
+
+    try {
+      await axiosInstance.post("/api/thue-cong-viec", payload, {
+        headers: {
+          token: `${userToken}`, // Add user token for authentication
+        },
+      });
+      message.success("Job hired successfully!");
+    } catch (error) {
+      message.error("Error hiring job.");
+    }
+  };
 
   if (isFetching) {
     return (
@@ -117,7 +149,7 @@ export const DetailCVTemplate = () => {
                     <button
                       className="border-2 border-black py-1 mt-4 rounded-md"
                       onClick={() => {
-                        navigate("/Profile");
+                        navigate(`/Profile/${user?.id}`);
                       }}
                     >
                       Contact Me
@@ -544,9 +576,12 @@ export const DetailCVTemplate = () => {
                             </List.Item>
                           )}
                         />
-                        <button className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative">
+                        <button
+                          className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative hover:!bg-green-700"
+                          onClick={handleHireJob}
+                        >
                           Continue
-                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%] "></i>
+                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%]"></i>
                         </button>
                         <button className="w-full py-3">
                           Compare packages
@@ -595,9 +630,12 @@ export const DetailCVTemplate = () => {
                             </List.Item>
                           )}
                         />
-                        <button className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative">
+                        <button
+                          className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative hover:!bg-green-700"
+                          onClick={handleHireJob}
+                        >
                           Continue
-                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%] "></i>
+                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%]"></i>
                         </button>
                         <button className="w-full py-3">
                           Compare packages
@@ -642,9 +680,12 @@ export const DetailCVTemplate = () => {
                             </List.Item>
                           )}
                         />
-                        <button className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative">
+                        <button
+                          className="text-center w-full bg-black text-white text-[25px] font-[500] rounded-md relative hover:!bg-green-700"
+                          onClick={handleHireJob}
+                        >
                           Continue
-                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%] "></i>
+                          <i className="fa-solid fa-arrow-right absolute right-5 top-[20%]"></i>
                         </button>
                         <button className="w-full py-3">
                           Compare packages

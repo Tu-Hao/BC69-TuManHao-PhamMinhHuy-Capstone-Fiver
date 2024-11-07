@@ -266,7 +266,9 @@ const Profile: React.FC = () => {
                 <span className="text-blue-500 text-sm">BETA</span>
               </Tooltip>
             </h2>
+            <Tooltip title="Make a connection with potential buyers while building credibility and gaining trust.">
             <QuestionCircleOutlined />
+            </Tooltip>
           </div>
           <p className="text-gray-700 mb-4">
             Stand out with a short introduction video.
@@ -286,7 +288,10 @@ const Profile: React.FC = () => {
                 <span className="text-pink-500 text-sm">NEW</span>
               </Tooltip>
             </h2>
+            <Tooltip title="Your portfolio can showcase two types of work: projects and reviews with files.">
             <QuestionCircleOutlined />
+            </Tooltip>
+
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center justify-center border border-dashed border-gray-300 h-24 rounded">
