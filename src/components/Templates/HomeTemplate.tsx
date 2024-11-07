@@ -10,8 +10,10 @@ import cn from "classnames";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../constants";
+import { useData } from "../../constants/Context";
 
 export const HomeTemplate = () => {
+  const {  setData } = useData();
   const { data: listTypeCV } = useGetTypeCV();
   const { data: detailCV } = useGetDetailTypeCV();
   const [valueSearch, setValueSearch] = useState<string>("");
@@ -119,13 +121,7 @@ export const HomeTemplate = () => {
           {detailCV?.map((item) => {
             if (item.hinhAnh && item.dsChiTietLoai.length != 0) {
               return (
-                <div
-                  key={item.id}
-                  className="p-3 "
-                  onClick={() => {
-                    navigate(PATH.DSCV);
-                  }}
-                >
+                <div key={item.id} className="p-3 ">
                   <div className="bg-green-600 px-3 py-2 rounded-md">
                     <div className="2xl:h-[150px] h-[125px] text-white ">
                       <p>{item.tenNhom}</p>
@@ -133,6 +129,10 @@ export const HomeTemplate = () => {
                         <p
                           key={item2.id}
                           className="2xl:text-[20px] text-[16px] ps-3 font-medium hover:underline"
+                          onClick={() => {
+                            setData({maChiTietCV:item2.id})
+                            navigate(PATH.DSCV );
+                          }}
                         >
                           {item2.tenChiTiet}
                         </p>

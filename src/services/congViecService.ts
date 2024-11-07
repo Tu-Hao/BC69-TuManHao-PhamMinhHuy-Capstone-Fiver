@@ -1,4 +1,4 @@
-import {  DetailLoaiCV, LoaiCV, MenuCV, PageCV, SearchCV } from "../@types/CongViec";
+import { DetailLoaiCV, LoaiCV, MenuCV, PageCV, SearchCV } from "../@types/CongViec";
 import { apiInstance } from "../constants/apiInstance";
 
 

@@ -16,16 +16,20 @@ import {
 import { useState } from "react";
 import cn from "classnames";
 import { useData } from "../../constants/Context";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { PATH } from "../../constants";
 import { useGetDetailUserById } from "../../Hook/Api/useUser";
 
 export const DanhSachCVTemplate = () => {
+ 
   const { data, setData } = useData();
   const [page, setPage] = useState<number>(1);
   const [id, setid] = useState<number>(2);
   const { data: pageCV } = useGetPageCV(page);
+
   const { data: resultSearch } = useSearchByMaLoai(data?.maChiTietCV as number);
+  console.log(resultSearch);
+
   const { data: info } = useGetDetailUserById(id);
   const { data: menu } = useGetMenuCV();
   const navigate = useNavigate();
@@ -34,10 +38,10 @@ export const DanhSachCVTemplate = () => {
     <div>
       <div className="mx-10 mt-3 border-2 rounded-md p-5">
         <div>
-          {data?.tenNhom ? (
-            <div className="text-[20px]">
+          {resultSearch ? (
+            <div className="text-[20px] ">
               <span className="font-[600]">For result</span>
-              <span>: "{data.tenNhom}"</span>
+              <span>: "{resultSearch && resultSearch[0].tenChiTietLoai}"</span>
             </div>
           ) : (
             <span></span>
@@ -45,7 +49,7 @@ export const DanhSachCVTemplate = () => {
         </div>
         <div
           className={cn("flex justify-between 2xl:flex-row flex-col gap-3", {
-            "mt-3": data?.tenNhom,
+            "mt-3": resultSearch
           })}
         >
           <div className="flex gap-1 items-center ">
@@ -65,9 +69,6 @@ export const DanhSachCVTemplate = () => {
                         onClick={() => {
                           setData({
                             maChiTietCV: item3.id,
-                            tenChiTietCV: item3.tenChiTiet,
-                            tenNhom: item2.tenNhom,
-                            tenLoai: item.tenLoaiCongViec,
                           });
                         }}
                       >
@@ -113,7 +114,8 @@ export const DanhSachCVTemplate = () => {
             <span>Online Sellers</span>
           </div>
         </div>
-        {data?.tenNhom ? (
+
+        {resultSearch ? (
           <Button
             danger
             className="mt-3"

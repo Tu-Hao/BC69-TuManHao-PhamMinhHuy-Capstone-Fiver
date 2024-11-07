@@ -150,17 +150,13 @@ export const ListnTypeCVTemplate = () => {
                         onClick={() => {
                           setData({
                             maChiTietCV: item2.id,
-                            tenChiTietCV: item2.tenChiTiet,
-                            tenNhom: item1.tenNhom,
-                            tenLoai: item.tenLoaiCongViec,
+                      
                           });
                           localStorage.setItem(
                             "data",
                             JSON.stringify({
                               maChiTietCV: item2.id,
-                              tenChiTietCV: item2.tenChiTiet,
-                              tenNhom: item1.tenNhom,
-                              tenLoai: item.tenLoaiCongViec,
+                     
                             })
                           );
                           navigate(PATH.DSCV);
