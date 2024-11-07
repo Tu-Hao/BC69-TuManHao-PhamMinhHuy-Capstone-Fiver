@@ -60,8 +60,8 @@ const Header: React.FC = () => {
               <div className="absolute left-0 mt-2 w-96 bg-white rounded-md shadow-lg z-50">
                 <div className="flex hover:bg-gray-100 rounded-md border-solid border-[1px] border-opacity-90 border-gray-200 font-bold px-1 py-1 mx-3 my-3">
                   <img
-                    src="./img/hire-freelancer.e3fcf5a.svg"
-                    className="m-2 place-self-center"
+                    src="/img/hire-freelancer.e3fcf5a.svg"
+                    className="m-2 text-4xl place-self-center"
                   />
                   <a
                     href="https://pro.fiverr.com/?source=header_pop_up"
