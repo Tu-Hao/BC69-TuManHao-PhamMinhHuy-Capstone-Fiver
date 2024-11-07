@@ -21,15 +21,11 @@ import { PATH } from "../../constants";
 import { useGetDetailUserById } from "../../Hook/Api/useUser";
 
 export const DanhSachCVTemplate = () => {
- 
   const { data, setData } = useData();
   const [page, setPage] = useState<number>(1);
   const [id, setid] = useState<number>(2);
   const { data: pageCV } = useGetPageCV(page);
-
   const { data: resultSearch } = useSearchByMaLoai(data?.maChiTietCV as number);
-  console.log(resultSearch);
-
   const { data: info } = useGetDetailUserById(id);
   const { data: menu } = useGetMenuCV();
   const navigate = useNavigate();
