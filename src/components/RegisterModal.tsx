@@ -1,7 +1,6 @@
 // src/components/RegisterModal.tsx
 import React, { useState } from "react";
 import { Modal, Button, Input, message } from "antd";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/authSlice";
 import { RootState } from "../redux/store";
