@@ -146,7 +146,7 @@ export const ListnTypeCVTemplate = () => {
                   {item1.dsChiTietLoai.map((item2) => (
                     <div key={item2.id}>
                       <p
-                        className="text-[15px]"
+                        className="text-[15px] cursor-pointer hover:underline"
                         onClick={() => {
                           setData({
                             maChiTietCV: item2.id,

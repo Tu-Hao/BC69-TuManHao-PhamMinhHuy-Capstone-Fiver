@@ -4,6 +4,7 @@ import { faGlobe, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
 import { useNavigate } from "react-router-dom";
+import { PATH } from "../constants";
 
 const Header: React.FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -189,6 +190,16 @@ const Header: React.FC = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
                   >
                     Logo maker
+                    <ul className="font-normal">Create your logo instantly</ul>
+                  </a>
+                </div>
+                <div className="flex hover:bg-gray-100 rounded-md border-solid border-[1px] border-opacity-90 border-gray-200 font-bold px-1 py-1 mx-3 my-3">
+                  <a
+                    href={PATH.LNTCV}
+                    target="_blank"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
+                  >
+                    List and Type Công việc
                     <ul className="font-normal">Create your logo instantly</ul>
                   </a>
                 </div>
