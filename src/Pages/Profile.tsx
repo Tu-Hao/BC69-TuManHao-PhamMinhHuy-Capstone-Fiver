@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { updateUserAvatar } from "../redux/authSlice";
 import EditProfile from "../components/EditProfile";
+import { useNavigate } from 'react-router-dom';
 import {
   CameraOutlined,
   EnvironmentOutlined,
@@ -12,6 +13,8 @@ import {
   QuestionCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { PATH } from "../constants";
+
 
 // Define TypeScript interfaces based on API response
 interface Content {
@@ -82,6 +85,8 @@ const Profile: React.FC = () => {
   const [skillsList, setSkillsList] = useState<Skill[]>([]); // State for skill options
   const [jobs, setJobs] = useState<JobContent[]>([]);
   const [activeTab, setActiveTab] = useState("incomplete");
+  const navigate = useNavigate();
+
 
   // Fetch user profile data
   useEffect(() => {
@@ -280,7 +285,9 @@ const Profile: React.FC = () => {
             >
               {job.hoanThanh ? "Undo Complete" : "Mark Complete"}
             </Button>
-            <Button type="primary" className="mr-2">
+            <Button type="primary" className="mr-2"   onClick={() => {
+    navigate(PATH.Detail, { state: job.id });
+  }}>
               View Detail
             </Button>
             <Button type="primary" danger>
@@ -300,7 +307,7 @@ const Profile: React.FC = () => {
       <div className="flex flex-row">
         {/* Content left */}
         <div>
-          <div className="bg-white p-6 rounded-lg shadow-md w-96 ">
+          <div className="bg-white p-6 rounded-lg shadow-md w-96 mb-4">
             {/* Avatar */}
             <div className="relative group h-24 w-24 mx-auto flex items-center justify-center">
               <img
@@ -349,7 +356,7 @@ const Profile: React.FC = () => {
             </div>
           </div>
           {/* Design like fiverr */}
-          <div className="space-y-6">
+          <div className="space-y-6 mb-4">
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">
