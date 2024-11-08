@@ -54,10 +54,7 @@ const RegisterModal: React.FC = () => {
       };
 
       // Gọi API đăng ký
-      const response = await axiosInstance.post(
-        "/api/auth/signup",
-        payload
-      );
+      const response = await axiosInstance.post("/api/auth/signup", payload);
 
       // Lưu thông tin user vào Redux
       dispatch(login(response.data));
@@ -68,12 +65,10 @@ const RegisterModal: React.FC = () => {
       setVisible(false); // Đóng modal sau khi đăng ký thành công
       try {
         // Call the login API
-        const response = await axiosInstance.post("/api/auth/signin", 
-          payload2
-        );
-  
+        const response = await axiosInstance.post("/api/auth/signin", payload2);
+
         const { user, token } = response.data.content;
-  
+
         // Dispatch login action with extracted user and token
         dispatch(
           login({
@@ -124,26 +119,15 @@ const RegisterModal: React.FC = () => {
       <Modal
         open={visible}
         onCancel={() => setVisible(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setVisible(false)}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            className="text-neutral-50 bg-lime-500"
-            onClick={handleRegister}
-          >
-            Create
-          </Button>,
-        ]}
+        className="modalStyle"
       >
-        <div className="flex h-full">
+        <div className="flex h-full"  onKeyDown={(e) => e.key === "Enter" && handleRegister()}>
           {/* Left half with background image */}
           <div className="w-1/2 relative">
             <img
               src="./img/BGmodal.png"
               alt="BGmodal"
-              className="bg-no-repeat bg-cover h-full rounded-md "
+              className="bg-no-repeat bg-cover min-h-full rounded-l-md "
             />
             <div className="absolute top-0 text-xl text-neutral-50 mt-4 w-full p-7 ">
               <h2 className="font-bold">Success starts here</h2>
@@ -174,6 +158,19 @@ const RegisterModal: React.FC = () => {
                 />
               </div>
               <div>
+                <label className="block text-sm font-medium ">
+                  Phone number:
+                </label>
+                <Input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="Phone number"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium ">Email:</label>
                 <Input
                   name="email"
@@ -184,6 +181,9 @@ const RegisterModal: React.FC = () => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
+              {errorMessage && (
+                <div className="text-red-500 text-sm">{errorMessage}</div>
+              )}
               <div>
                 <label className="block text-sm font-medium ">Password:</label>
                 <Input.Password
@@ -206,21 +206,19 @@ const RegisterModal: React.FC = () => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium ">
-                  Phone number:
-                </label>
-                <Input
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="Phone number"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm "
-                />
-              </div>
-              {errorMessage && (
-                <div className="text-red-500 text-sm">{errorMessage}</div>
-              )}
+            </div>
+            <div className="mt-6 flex flex-row justify-end">
+              <Button key="cancel" onClick={() => setVisible(false)}>
+                Cancel
+              </Button>
+              ,
+              <Button
+                key="submit"
+                className="text-neutral-50 bg-lime-500"
+                onClick={handleRegister}
+              >
+                Create
+              </Button>
             </div>
           </div>
         </div>

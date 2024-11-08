@@ -26,10 +26,10 @@ const LoginModal: React.FC = () => {
 
   useEffect(() => {
     // Refresh avatar in LoginModal when updated in the profile
-    if (user) (user.avatar); // set other user data as needed
+    if (user) user.avatar; // set other user data as needed
   }, [user]);
 
- const handleLogin = async () => {
+  const handleLogin = async () => {
     try {
       // Validate form using Zod
       loginSchema.parse({ email, password });
@@ -140,26 +140,16 @@ const LoginModal: React.FC = () => {
       <Modal
         open={visible}
         onCancel={() => setVisible(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setVisible(false)}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            className="text-neutral-50 bg-lime-500"
-            onClick={handleLogin}
-          >
-            Sign in
-          </Button>,
-        ]}
+        className="modalStyle"
+        
       >
-        <div className="flex h-full">
+        <div className="flex h-full" onKeyDown={(e) => e.key === "Enter" && handleLogin()}>
           {/* Left half with background image */}
           <div className="w-1/2 relative">
             <img
               src="./img/BGmodal.png"
               alt="BGmodal"
-              className="bg-no-repeat bg-cover h-full rounded-md "
+              className="bg-no-repeat bg-cover h-full rounded-l-md "
             />
             <div className="absolute top-0 text-xl text-neutral-50 mt-1 w-full p-7 ">
               <h2 className="font-bold">Success starts here</h2>
@@ -176,7 +166,7 @@ const LoginModal: React.FC = () => {
           </div>
 
           {/* Right half with registration form */}
-          <div className="w-1/2 p-8">
+          <div className="w-1/2 p-8 relative"   >
             <h2 className="text-2xl font-bold mb-4">Login</h2>
             <div className="space-y-4">
               <div>
@@ -202,6 +192,19 @@ const LoginModal: React.FC = () => {
                 <div className="text-red-500 text-sm">{errorMessage}</div>
               )}
             </div>
+            <div className="flex flex-row justify-end absolute right-0 bottom-0 mb-5 mr-8">
+              <Button key="cancel" onClick={() => setVisible(false)}>
+                Cancel
+              </Button>
+              ,
+              <Button
+                key="submit"
+                className="text-neutral-50 bg-lime-500"
+                onClick={handleLogin}
+              >
+                Sign in
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
@@ -210,4 +213,3 @@ const LoginModal: React.FC = () => {
 };
 
 export default LoginModal;
-
