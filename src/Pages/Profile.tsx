@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { updateUserAvatar } from "../redux/authSlice";
 import EditProfile from "../components/EditProfile";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   CameraOutlined,
   EnvironmentOutlined,
@@ -14,7 +14,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { PATH } from "../constants";
-
 
 // Define TypeScript interfaces based on API response
 interface Content {
@@ -86,7 +85,6 @@ const Profile: React.FC = () => {
   const [jobs, setJobs] = useState<JobContent[]>([]);
   const [activeTab, setActiveTab] = useState("incomplete");
   const navigate = useNavigate();
-
 
   // Fetch user profile data
   useEffect(() => {
@@ -243,6 +241,50 @@ const Profile: React.FC = () => {
     }
   };
 
+  // Handle delete job
+  const handleDeleteJob = (jobId: number) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this job?",
+      content: "Once deleted, you will not be able to recover this job!",
+      okText: "Yes, delete it",
+      cancelText: "Cancel",
+      onOk: () => {
+        // Proceed with deletion after confirmation
+        axiosInstance
+          .delete(`/api/thue-cong-viec/${jobId}`, {
+            headers: {
+              token: `${userToken}`, // Add user token for authentication
+            },
+          })
+          .then(() => {
+            message.success("Job deleted successfully");
+            // Refetch rented jobs
+            // axiosInstance
+            //   .get("/api/thue-cong-viec/lay-danh-sach-da-thue", {
+            //     headers: {
+            //       token: `${userToken}`, // Add user token for authentication
+            //     },
+            //   })
+            //   .then((response) => {
+            //     setJobs(response.data.content);
+            //   })
+            //   .catch(() => {
+            //     message.error("You do not have any rented jobs");
+            //   });
+            
+                      // Update local state to remove the deleted job
+          setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+          })
+          .catch(() => {
+            message.error("Failed to delete job");
+          });
+      },
+      onCancel() {
+        message.info("Job deletion cancelled");
+      },
+    });
+  };
+
   // Handle rented jobs
   const toggleCompletion = (id: number) => {
     setJobs(
@@ -273,9 +315,12 @@ const Profile: React.FC = () => {
             </h3>
             <p className="text-sm mb-1 text-gray-600">{job.ngayThue}</p>
             <p className="text-sm mb-1">{job.congViec.moTaNgan}</p>
-            <p className="text-md">Price: <span className="font-bold">{job.congViec.giaTien} $</span></p>
+            <p className="text-md">
+              Price: <span className="font-bold">{job.congViec.giaTien} $</span>
+            </p>
             <p className="text-sm mb-2">
-              {renderStars(job.congViec.saoCongViec)}<span className="text-sm"> ({job.congViec.danhGia})</span>
+              {renderStars(job.congViec.saoCongViec)}
+              <span className="text-sm"> ({job.congViec.danhGia})</span>
             </p>
 
             <Button
@@ -285,12 +330,20 @@ const Profile: React.FC = () => {
             >
               {job.hoanThanh ? "Undo Complete" : "Mark Complete"}
             </Button>
-            <Button type="primary" className="mr-2"   onClick={() => {
-    navigate(PATH.Detail, { state: job.id });
-  }}>
+            <Button
+              type="primary"
+              className="mr-2"
+              onClick={() => {
+                navigate(PATH.Detail, { state: job.congViec.id });
+              }}
+            >
               View Detail
             </Button>
-            <Button type="primary" danger>
+            <Button
+              type="primary"
+              danger
+              onClick={() => handleDeleteJob(job.id)}
+            >
               Delete
             </Button>
           </div>

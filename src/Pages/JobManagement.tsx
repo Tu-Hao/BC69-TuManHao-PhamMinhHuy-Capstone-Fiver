@@ -184,7 +184,8 @@ const JobManagement: React.FC = () => {
           })
           .then(() => {
             message.success("Job deleted successfully");
-            fetchJobs(currentPage, keyword); // Reload the jobs after deletion
+          // Update local state to remove the deleted job
+          setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId)); // Reload the jobs after deletion
           })
           .catch(() => {
             message.error("Failed to delete job");
