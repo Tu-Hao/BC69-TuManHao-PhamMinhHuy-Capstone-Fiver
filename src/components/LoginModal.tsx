@@ -57,7 +57,7 @@ const LoginModal: React.FC = () => {
       if (error.issues) {
         setErrorMessage(error.issues[0].message); // Zod validation error
       } else {
-        setErrorMessage("Login failed. Please re-check your information.");
+        setErrorMessage("Login failed. Wrong email or password.");
       }
     }
   };

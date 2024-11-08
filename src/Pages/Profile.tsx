@@ -80,6 +80,7 @@ const Profile: React.FC = () => {
   const userToken = useSelector((state: RootState) => state.auth.token); // Get user token from Redux store
   const [previewImage, setPreviewImage] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible2, setIsModalVisible2] = useState(false);
   const dispatch = useDispatch();
   const [skillsList, setSkillsList] = useState<Skill[]>([]); // State for skill options
   const [jobs, setJobs] = useState<JobContent[]>([]);
@@ -184,7 +185,7 @@ const Profile: React.FC = () => {
       if (selectedFile.size <= 25 * 1024 * 1024) {
         setFileList(selectedFile);
         setPreviewImage(URL.createObjectURL(selectedFile)); // Create preview URL
-        setIsModalVisible(true); // Show confirmation modal
+        setIsModalVisible2(true); // Show confirmation modal
       } else {
         message.error("File size must not exceed 25MB");
       }
@@ -213,7 +214,7 @@ const Profile: React.FC = () => {
               const newAvatar = response.data.content.avatar;
               dispatch(updateUserAvatar(newAvatar)); // Update avatar in Redux
               setUserData(response.data.content); // Update user data with new avatar
-              setIsModalVisible(false); // Close modal after upload
+              setIsModalVisible2(false); // Close modal after upload
             })
             .catch(() => {
               message.error("Error refreshing profile data");
@@ -586,9 +587,9 @@ const Profile: React.FC = () => {
             {/* Modal upload Avatar */}
             <Modal
               title="Use this image as your profile picture?"
-              open={isModalVisible}
+              open={isModalVisible2}
               onOk={handleUpload}
-              onCancel={() => setIsModalVisible(false)}
+              onCancel={() => setIsModalVisible2(false)}
               okText="Yes"
               cancelText="No"
             >
