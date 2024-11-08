@@ -163,7 +163,7 @@ export const Header = () => {
                   {
                     key: loai.id,
                     label: (
-                      <div
+                      <div className="hover:underline"
                         onClick={() => {
                           setData({
                             maChiTietCV: loai.id,
