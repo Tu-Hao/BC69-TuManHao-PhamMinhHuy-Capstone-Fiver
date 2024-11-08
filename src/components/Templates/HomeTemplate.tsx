@@ -128,7 +128,7 @@ export const HomeTemplate = () => {
                       {item.dsChiTietLoai.map((item2) => (
                         <p
                           key={item2.id}
-                          className="2xl:text-[20px] text-[16px] ps-3 font-medium hover:underline"
+                          className="2xl:text-[20px] text-[16px] ps-3 font-medium hover:underline cursor-pointer"
                           onClick={() => {
                             setData({maChiTietCV:item2.id})
                             navigate(PATH.DSCV );
