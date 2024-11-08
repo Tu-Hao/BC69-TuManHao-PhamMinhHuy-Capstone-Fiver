@@ -463,7 +463,7 @@ export const DetailCVTemplate = () => {
                             <p>Helpful</p>
                             <Rate
                               character={
-                                <i className="fa-regular fa-thumbs-up "></i>
+                                <i className="fa-regular fa-thumbs-down "></i>
                               }
                               count={1}
                             />

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/authSlice";
 import { RootState } from "../redux/store";
 import { z } from "zod";
+import axiosInstance from "../constants/api";
 
 // Schema xác thực form đăng ký sử dụng Zod
 const registerSchema = z
@@ -54,22 +55,42 @@ const RegisterModal: React.FC = () => {
       };
 
       // Gọi API đăng ký
-      const response = await axios.post(
-        "https://fiverrnew.cybersoft.edu.vn/api/auth/signup",
-        payload,
-        {
-          headers: {
-            TokenCyberSoft:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA2OSIsIkhldEhhblN0cmluZyI6IjAxLzAyLzIwMjUiLCJIZXRIYW5UaW1lIjoiMTczODM2ODAwMDAwMCIsIm5iZiI6MTcxMDUyMjAwMCwiZXhwIjoxNzM4NTE1NjAwfQ.ap-iPzMpXDeCuXH0aJnbbSuR3vIW4upk1nOK3h9D-5g",
-          },
-        }
+      const response = await axiosInstance.post(
+        "/api/auth/signup",
+        payload
       );
 
       // Lưu thông tin user vào Redux
       dispatch(login(response.data));
-
+      const payload2 = {
+        email: formData.email,
+        password: formData.password,
+      };
       setVisible(false); // Đóng modal sau khi đăng ký thành công
-      message.success("Registration successful !");
+      try {
+        // Call the login API
+        const response = await axiosInstance.post("/api/auth/signin", 
+          payload2
+        );
+  
+        const { user, token } = response.data.content;
+  
+        // Dispatch login action with extracted user and token
+        dispatch(
+          login({
+            user, // Save the user data
+            token, // Save the token
+          })
+        );
+
+        message.success("Login successfully !");
+      } catch (error: any) {
+        if (error.issues) {
+          setErrorMessage(error.issues[0].message); // Zod validation error
+        } else {
+          setErrorMessage("Login failed. Please try signing in again.");
+        }
+      }
       setErrorMessage(null);
     } catch (error: any) {
       if (error.response && error.response.status === 400) {

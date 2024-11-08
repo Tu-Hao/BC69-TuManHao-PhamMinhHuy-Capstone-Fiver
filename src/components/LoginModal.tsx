@@ -29,7 +29,7 @@ const LoginModal: React.FC = () => {
     if (user) (user.avatar); // set other user data as needed
   }, [user]);
 
-  const handleLogin = async () => {
+ const handleLogin = async () => {
     try {
       // Validate form using Zod
       loginSchema.parse({ email, password });
@@ -57,7 +57,7 @@ const LoginModal: React.FC = () => {
       if (error.issues) {
         setErrorMessage(error.issues[0].message); // Zod validation error
       } else {
-        setErrorMessage("Login failed. Please check your information.");
+        setErrorMessage("Login failed. Please re-check your information.");
       }
     }
   };
@@ -210,3 +210,4 @@ const LoginModal: React.FC = () => {
 };
 
 export default LoginModal;
+
