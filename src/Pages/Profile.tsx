@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, message, Modal, Tooltip } from "antd";
+import { Button, Card, message, Modal, Tooltip } from "antd";
 import axiosInstance from "../constants/api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -271,7 +271,7 @@ const Profile: React.FC = () => {
             //   .catch(() => {
             //     message.error("You do not have any rented jobs");
             //   });
-            
+
                       // Update local state to remove the deleted job
           setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
           })
@@ -294,61 +294,126 @@ const Profile: React.FC = () => {
     );
   };
   const renderStars = (count: number) => "⭐".repeat(count);
-  const renderJobs = (completed: boolean) =>
-    jobs
-      .filter((job) => job.hoanThanh === completed)
-      .map((job) => (
-        <div
-          key={job.id}
-          className="bg-white rounded-lg shadow-md p-4 mb-4 flex flex-row"
-        >
-          <div className="min-w-72 h-48 mr-5">
-            <img
-              src={job.congViec.hinhAnh}
-              alt={job.congViec.tenCongViec}
-              className="w-full h-full object-cover rounded"
-            />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">
-              {job.congViec.tenCongViec}
-            </h3>
-            <p className="text-sm mb-1 text-gray-600">{job.ngayThue}</p>
-            <p className="text-sm mb-1">{job.congViec.moTaNgan}</p>
-            <p className="text-md">
-              Price: <span className="font-bold">{job.congViec.giaTien} $</span>
-            </p>
-            <p className="text-sm mb-2">
-              {renderStars(job.congViec.saoCongViec)}
-              <span className="text-sm"> ({job.congViec.danhGia})</span>
-            </p>
+  const renderJobs = (completed: boolean) => {
+  const filteredJobs = jobs.filter((job) => job.hoanThanh === completed);
 
-            <Button
-              onClick={() => toggleCompletion(job.id)}
-              type="default"
-              className="mr-2"
-            >
-              {job.hoanThanh ? "Undo Complete" : "Mark Complete"}
-            </Button>
-            <Button
-              type="primary"
-              className="mr-2"
-              onClick={() => {
-                navigate(PATH.Detail, { state: job.congViec.id });
-              }}
-            >
-              View Detail
-            </Button>
-            <Button
-              type="primary"
-              danger
-              onClick={() => handleDeleteJob(job.id)}
-            >
-              Delete
-            </Button>
+  if (filteredJobs.length === 0) {
+    return (
+      <div className="p-8">
+      <h1 className="text-2xl font-bold">Welcome, {userData.name}</h1>
+      <p className="text-gray-600">Find important messages, tips, and links to helpful resources here:</p>
+
+      <Card className="mt-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-semibold">Grow your business with Seller Plus</h2>
+            <p className="text-gray-600">Check out all the tools and benefits that can help you scale your success</p>
+          </div>
+          <Button type="link" className="text-black">X</Button>
+        </div>
+      </Card>
+
+      <div className="mt-4 flex justify-between items-center">
+        <Card className="flex-1 mr-2">
+          <h2 className="text-lg font-semibold float-start">Active orders - 0 ($0)</h2>
+          <Button type="default" className="float-end">Active orders (0)</Button>
+        </Card>
+        
+      </div>
+
+      <h2 className="mt-8 text-lg font-semibold">Upgrade Your Business</h2>
+      <div className="border-t mt-2 mb-8"></div>
+
+      <Card>
+        <h3 className="text-xl font-semibold mb-4">3 steps to become a top seller on Fiverr</h3>
+        <p className="text-gray-600 mb-6">
+          The key to your success on Fiverr is the brand you build for yourself through your Fiverr reputation. We gathered some tips and resources to help you become a leading seller on Fiverr.
+        </p>
+        <div className="flex justify-between">
+          <div className="text-center">
+            <img src="\img\promote-self.db237d3.svg" alt="Get noticed" className="mx-auto mb-2" />
+            <h4 className="font-semibold mb-2">Get noticed</h4>
+            <p className="text-gray-600 mb-4">
+              Tap into the power of social media by <span className="text-blue-500">sharing your Gig</span>, and <span className="text-blue-500">get expert help</span> to grow your impact.
+            </p>
+            <Button type="primary">Share Your Gigs</Button>
+          </div>
+          <div className="text-center">
+            <img src="\img\learn-new-skill.6dea4e9.svg" alt="Get more skills" className="mx-auto mb-2" />
+            <h4 className="font-semibold mb-2">Get more skills & exposure</h4>
+            <p className="text-gray-600 mb-4">
+              Hone your skills and expand your knowledge with online courses. You’ll be able to offer more services and <span className="text-blue-500">gain more exposure</span> with every course completed.
+            </p>
+            <Button type="primary">Explore Learn</Button>
+          </div>
+          <div className="text-center">
+            <img src="\img\get-great-reviews.01e1256.svg" alt="Become a successful seller" className="mx-auto mb-2" />
+            <h4 className="font-semibold mb-2">Become a successful seller!</h4>
+            <p className="text-gray-600 mb-4">
+              Watch this free online course to learn how to create an outstanding service experience for your buyer and <span className="text-blue-500">grow your career</span> as an online freelancer.
+            </p>
+            <Button type="primary">Watch Free Course</Button>
           </div>
         </div>
-      ));
+      </Card>
+    </div>
+    );
+  }
+
+  return filteredJobs.map((job) => (
+    <div
+      key={job.id}
+      className="bg-white rounded-lg shadow-md p-4 mb-4 flex flex-row"
+    >
+      <div className="min-w-72 h-48 mr-5">
+        <img
+          src={job.congViec.hinhAnh}
+          alt={job.congViec.tenCongViec}
+          className="w-full h-full object-cover rounded"
+        />
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold">
+          {job.congViec.tenCongViec}
+        </h3>
+        <p className="text-sm mb-1 text-gray-600">{job.ngayThue}</p>
+        <p className="text-sm mb-1">{job.congViec.moTaNgan}</p>
+        <p className="text-md">
+          Price: <span className="font-bold">{job.congViec.giaTien} $</span>
+        </p>
+        <p className="text-sm mb-2">
+          {renderStars(job.congViec.saoCongViec)}
+          <span className="text-sm"> ({job.congViec.danhGia})</span>
+        </p>
+
+        <Button
+          onClick={() => toggleCompletion(job.id)}
+          type="default"
+          className="mr-2"
+        >
+          {job.hoanThanh ? "Undo Complete" : "Mark Complete"}
+        </Button>
+        <Button
+          type="primary"
+          className="mr-2"
+          onClick={() => {
+            navigate(PATH.Detail, { state: job.congViec.id });
+          }}
+        >
+          View Detail
+        </Button>
+        <Button
+          type="primary"
+          danger
+          onClick={() => handleDeleteJob(job.id)}
+        >
+          Delete
+        </Button>
+      </div>
+    </div>
+  ));
+};
+
 
   if (!userData) {
     return <div>Error occurred! Please re-sign in.</div>;
