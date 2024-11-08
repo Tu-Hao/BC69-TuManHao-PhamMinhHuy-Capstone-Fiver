@@ -167,17 +167,11 @@ export const Header = () => {
                         onClick={() => {
                           setData({
                             maChiTietCV: loai.id,
-                            tenChiTietCV: loai.tenChiTiet,
-                            tenNhom: dsNhom.tenNhom,
-                            tenLoai: item.tenLoaiCongViec,
                           });
                           localStorage.setItem(
                             "data",
                             JSON.stringify({
                               maChiTietCV: loai.id,
-                              tenChiTietCV: loai.tenChiTiet,
-                              tenNhom: dsNhom.tenNhom,
-                              tenLoai: item.tenLoaiCongViec,
                             })
                           );
                           if (location.pathname !== "/DSCV") {

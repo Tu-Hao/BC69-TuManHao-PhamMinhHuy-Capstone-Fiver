@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface Data {
-    tenLoai: string | null;
-    tenNhom: string | null;
-    tenChiTietCV: string;
     maChiTietCV: number;
 }
 

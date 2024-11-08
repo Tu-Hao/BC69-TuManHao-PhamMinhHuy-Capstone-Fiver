@@ -29,15 +29,19 @@ export const DanhSachCVTemplate = () => {
   const { data: info } = useGetDetailUserById(id);
   const { data: menu } = useGetMenuCV();
   const navigate = useNavigate();
-
+  const [budget, setbudget] = useState<number | string>("Budget");
+  const [star, setStar] = useState<number | string>("Service Options");
+  if (typeof budget == "number") {
+    pageCV?.data.sort((a, b) => b.giaTien * budget - a.giaTien * budget);
+  }
   return (
     <div>
       <div className="mx-10 mt-3 border-2 rounded-md p-5">
         <div>
-          {data?.tenNhom ? (
-            <div className="text-[20px]">
+          {resultSearch ? (
+            <div className="text-[20px] ">
               <span className="font-[600]">For result</span>
-              <span>: "{data.tenNhom}"</span>
+              <span>: "{resultSearch && resultSearch[0].tenChiTietLoai}"</span>
             </div>
           ) : (
             <span></span>
@@ -45,7 +49,7 @@ export const DanhSachCVTemplate = () => {
         </div>
         <div
           className={cn("flex justify-between 2xl:flex-row flex-col gap-3", {
-            "mt-3": data?.tenNhom,
+            "mt-3": resultSearch,
           })}
         >
           <div className="flex gap-1 items-center ">
@@ -65,9 +69,6 @@ export const DanhSachCVTemplate = () => {
                         onClick={() => {
                           setData({
                             maChiTietCV: item3.id,
-                            tenChiTietCV: item3.tenChiTiet,
-                            tenNhom: item2.tenNhom,
-                            tenLoai: item.tenLoaiCongViec,
                           });
                         }}
                       >
@@ -84,9 +85,53 @@ export const DanhSachCVTemplate = () => {
               }}
             />
             <Select
-              defaultValue="Service Options"
-              style={{ width: "auto" }}
-              options={[]}
+              value={star}
+              style={{ width: 139 }}
+              options={[
+                {
+                  value: 5,
+                  label: (
+                    <div>
+                      5 <i className="fa-solid fa-star text-yellow-400"></i>
+                    </div>
+                  ),
+                },
+                {
+                  value: 4,
+                  label: (
+                    <div>
+                      4 <i className="fa-solid fa-star text-yellow-400"></i>
+                    </div>
+                  ),
+                },
+                {
+                  value: 3,
+                  label: (
+                    <div>
+                      3 <i className="fa-solid fa-star text-yellow-400"></i>
+                    </div>
+                  ),
+                },
+                {
+                  value: 2,
+                  label: (
+                    <div>
+                      2 <i className="fa-solid fa-star text-yellow-400"></i>
+                    </div>
+                  ),
+                },
+                {
+                  value: 1,
+                  label: (
+                    <div>
+                      1 <i className="fa-solid fa-star text-yellow-400"></i>
+                    </div>
+                  ),
+                },
+              ]}
+              onChange={(v) => {
+                setStar(Number(v));
+              }}
             />
             <Select
               defaultValue="Seller Details"
@@ -94,9 +139,15 @@ export const DanhSachCVTemplate = () => {
               options={[]}
             />
             <Select
-              defaultValue="Budget"
-              style={{ width: "auto" }}
-              options={[]}
+              value={budget}
+              style={{ width: 94 }}
+              options={[
+                { value: 1, label: "Giá tăng" },
+                { value: -1, label: "Giá giảm" },
+              ]}
+              onChange={(v) => {
+                setbudget(Number(v));
+              }}
             />
             <Select
               defaultValue="Delivery Time"
@@ -113,12 +164,15 @@ export const DanhSachCVTemplate = () => {
             <span>Online Sellers</span>
           </div>
         </div>
-        {data?.tenNhom ? (
+
+        {data || typeof budget != "string" || typeof star != "string" ?(
           <Button
             danger
             className="mt-3"
             onClick={() => {
               setData(null);
+              setbudget("Budget");
+              setStar("Service Options")
               localStorage.clear();
             }}
           >
@@ -149,13 +203,13 @@ export const DanhSachCVTemplate = () => {
                   <div className="h-[100px] ">
                     <p className=" text-wrap h-[50px] truncate">
                       <span className="font-[600]">Name: </span>
-                      <Popover content={congViec.tenCongViec} title="Title">
+                      <Popover content={congViec.tenCongViec} title="Name">
                         {congViec.tenCongViec}
                       </Popover>
                     </p>
                     <p className=" text-wrap h-[50px] truncate">
                       <span className="font-[600]">Mô tả: </span>
-                      <Popover content={congViec.moTaNgan} title="Title">
+                      <Popover content={congViec.moTaNgan} title="Description">
                         {congViec.moTaNgan}
                       </Popover>
                     </p>
@@ -192,7 +246,12 @@ export const DanhSachCVTemplate = () => {
                 </div>
               );
             })
-          : pageCV?.data.map((item) => {
+          : pageCV?.data.filter(item=>{
+            if (typeof star =="number"){
+              return item.saoCongViec==star
+            }
+            return item
+          }).map((item) => {
               if (item.nguoiTao != id) {
                 setid(item.nguoiTao);
               }
@@ -212,13 +271,13 @@ export const DanhSachCVTemplate = () => {
                   <div className="h-[100px] ">
                     <p className=" text-wrap h-[50px] truncate">
                       <span className="font-[600]">Name: </span>
-                      <Popover content={item.tenCongViec} title="Title">
+                      <Popover content={item.tenCongViec} title="Name">
                         {item.tenCongViec}
                       </Popover>
                     </p>
                     <p className=" text-wrap h-[50px] truncate">
                       <span className="font-[600]">Mô tả: </span>
-                      <Popover content={item.moTaNgan} title="Title">
+                      <Popover content={item.moTaNgan} title="Description">
                         {item.moTaNgan}
                       </Popover>
                     </p>
@@ -257,6 +316,7 @@ export const DanhSachCVTemplate = () => {
         total={50}
         onChange={(v) => {
           setPage(v);
+          window.scrollTo(0, 0);
         }}
       />
     </div>
